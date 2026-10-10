@@ -1,0 +1,1130 @@
+<!--
+  SURVEYOR — a link surveyor for your website
+  Single file. No build step. No telemetry, no analytics, no cookies, no storage.
+  It DOES send HEAD/GET requests from your browser to every site it checks (see "Privacy" in the page).
+  CC0 1.0 Universal — do whatever you want with this.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Link checker for websites in a single HTML file. Crawls same-origin pages, checks links and images, exports a report. Sends requests from your browser to every site it checks.">
+<meta name="referrer" content="no-referrer">
+<meta property="og:title" content="SURVEYOR — a link surveyor for your website">
+<meta property="og:description" content="Single-file link checker. No telemetry; requests go from your browser to the sites you check.">
+<meta property="og:type" content="website">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-2nIdmaOXSMQMywDKJuMLdfpqgi/Fax63Mnnw5gZSgQ8='; style-src 'unsafe-inline'; img-src data:; connect-src https: http:; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; worker-src 'none'; manifest-src 'none'">
+<meta name="theme-color" content="#0f1620">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Surveyor">
+<title>SURVEYOR — a link surveyor for your website</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%230f1620'/%3E%3Ccircle cx='20' cy='20' r='16' fill='none' stroke='%23d1a94a' stroke-width='1.4' opacity='0.6'/%3E%3Cpath d='M20 7 L20 12 M20 28 L20 33 M7 20 L12 20 M28 20 L33 20' stroke='%23d1a94a' stroke-width='1.4' opacity='0.6'/%3E%3Cpath d='M20 12 L24 20 L20 28 L16 20 Z' fill='%235fc4ae'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%230f1620'/%3E%3Ccircle cx='20' cy='20' r='16' fill='none' stroke='%23d1a94a' stroke-width='1.4' opacity='0.6'/%3E%3Cpath d='M20 7 L20 12 M20 28 L20 33 M7 20 L12 20 M28 20 L33 20' stroke='%23d1a94a' stroke-width='1.4' opacity='0.6'/%3E%3Cpath d='M20 12 L24 20 L20 28 L16 20 Z' fill='%235fc4ae'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --ink:#0f1620;--panel:#17212c;--panel-2:#1e2a36;--line:#2c3a47;--line-soft:#22303c;
+    --parchment:#e6ded0;--parchment-dim:#9099a3;--parchment-faint:#8493a0;
+    --verdigris:#5fc4ae;--verdigris-bg:rgba(95,196,174,.12);
+    --rust:#e08659;--rust-bg:rgba(224,134,89,.14);
+    --gold:#d1a94a;--gold-bg:rgba(209,169,74,.12);
+    --slate:#7fa8d9;--slate-bg:rgba(127,168,217,.12);
+    --font-display:'Bahnschrift','DIN Alternate','Arial Narrow',ui-sans-serif,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,'SF Mono',Consolas,'Liberation Mono',monospace;
+    --radius-sm:3px;--radius-md:6px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);color:var(--parchment);font-family:var(--font-body);
+    line-height:1.5;-webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(95,196,174,.05), transparent 60%),
+      radial-gradient(ellipse 700px 600px at 100% 10%, rgba(209,169,74,.04), transparent 55%);
+    background-attachment:fixed;
+  }
+  .app{max-width:920px;margin:0 auto;padding:36px 20px 80px;}
+
+  /* ---------- header ---------- */
+  header.top{margin-bottom:28px;}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:4px;}
+  .brand h1{
+    font-family:var(--font-display);font-size:1.6rem;font-weight:700;letter-spacing:.14em;
+    margin:0;color:var(--parchment);text-transform:uppercase;
+  }
+  .tagline{font-size:.92rem;color:var(--parchment-dim);margin:0 0 2px;}
+  .cors-note{
+    font-size:.78rem;color:var(--parchment-faint);margin:10px 0 0;padding:10px 14px;
+    background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--radius-md);
+    border-left:3px solid var(--slate);
+  }
+  .cors-note strong{color:var(--slate);}
+  .ethics-note{
+    font-size:.78rem;color:var(--parchment-dim);margin:10px 0 0;padding:10px 14px;
+    background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--radius-md);
+    border-left:3px solid var(--gold);
+  }
+  .ethics-note strong{color:var(--gold);}
+  .limit-note{font-size:.76rem;color:var(--gold);margin:6px 0 0;}
+  .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  .progress-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+
+  /* ---------- survey form ---------- */
+  .survey-panel{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-md);
+    padding:20px;margin:22px 0;
+  }
+  .mode-tabs{display:flex;gap:2px;margin-bottom:16px;border-bottom:1px solid var(--line);}
+  .mode-tab{
+    font-family:var(--font-display);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+    background:transparent;border:none;color:var(--parchment-dim);padding:11px 4px;margin-right:20px;
+    cursor:pointer;border-bottom:2px solid transparent;position:relative;bottom:-1px;
+  }
+  .mode-tab[aria-selected="true"]{color:var(--gold);border-bottom-color:var(--gold);}
+  .mode-tab:hover:not([aria-selected="true"]){color:var(--parchment-dim);}
+
+  .field-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+  .field-row.stack{flex-direction:column;}
+  input[type="text"],input[type="url"],textarea{
+    background:var(--ink);border:1px solid var(--line);color:var(--parchment);
+    font-family:var(--font-mono);font-size:.86rem;padding:10px 12px;border-radius:var(--radius-sm);
+    flex:1 1 260px;min-width:0;
+  }
+  input[type="text"]::placeholder,input[type="url"]::placeholder,textarea::placeholder{color:var(--parchment-faint);}
+  input:focus-visible,summary:focus-visible,
+  button:focus-visible,select:focus-visible,a:focus-visible,textarea:focus-visible{
+    outline:2px solid var(--verdigris);outline-offset:2px;
+  }
+  textarea{font-family:var(--font-mono);font-size:.76rem;min-height:160px;resize:vertical;width:100%;}
+
+  .btn-primary{
+    font-family:var(--font-display);font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--verdigris);color:var(--ink);border:none;padding:10px 20px;border-radius:var(--radius-sm);
+    cursor:pointer;font-weight:700;white-space:nowrap;
+  }
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-primary:disabled{background:var(--line);color:var(--parchment-faint);cursor:not-allowed;}
+  .btn-secondary{
+    font-family:var(--font-display);font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;
+    background:transparent;color:var(--parchment-dim);border:1px solid var(--line);padding:9px 16px;
+    border-radius:var(--radius-sm);cursor:pointer;
+  }
+  .btn-secondary:hover{border-color:var(--parchment-faint);color:var(--parchment);}
+  .btn-secondary:disabled{opacity:.4;cursor:not-allowed;}
+
+  .advanced-toggle{
+    font-family:var(--font-mono);font-size:.74rem;color:var(--parchment-faint);background:none;
+    border:none;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px;
+  }
+  .advanced-panel{display:none;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-soft);flex-wrap:wrap;align-items:center;}
+  .advanced-panel.open{display:flex;}
+  .adv-field{display:flex;flex-direction:column;gap:4px;}
+  .adv-field label{font-family:var(--font-display);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--parchment-faint);}
+  .adv-field input[type="number"]{
+    background:var(--ink);border:1px solid var(--line);color:var(--parchment);
+    font-family:var(--font-mono);font-size:.82rem;padding:6px 8px;border-radius:var(--radius-sm);width:70px;
+  }
+  .adv-checkbox{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--parchment-dim);}
+
+  /* ---------- progress ---------- */
+  .progress-panel{
+    display:none;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);
+    border-radius:var(--radius-md);padding:16px 20px;margin:18px 0;
+  }
+  .progress-panel.active{display:block;}
+  .progress-line{font-family:var(--font-mono);font-size:.82rem;color:var(--parchment-dim);}
+  .progress-line strong{color:var(--gold);}
+  .progress-bar-track{height:4px;background:var(--line-soft);border-radius:2px;margin-top:10px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s ease;width:0%;}
+  .progress-current-url{font-family:var(--font-mono);font-size:.72rem;color:var(--parchment-faint);margin-top:6px;word-break:break-all;}
+
+  /* ---------- summary ---------- */
+  .summary-strip{display:none;gap:14px;margin:20px 0;flex-wrap:wrap;}
+  .summary-strip.active{display:flex;}
+  .summary-stat{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-md);
+    padding:12px 18px;flex:1 1 120px;min-width:110px;
+  }
+  .summary-stat .num{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--parchment);display:block;}
+  .summary-stat .lbl{font-family:var(--font-display);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--parchment-faint);}
+  .summary-stat.washed-out .num{color:var(--rust);}
+  .summary-stat.passable .num{color:var(--verdigris);}
+  .summary-stat.uncertain .num{color:var(--slate);}
+
+  /* ---------- results controls ---------- */
+  .results-controls{display:none;gap:10px;margin:18px 0 10px;flex-wrap:wrap;align-items:center;justify-content:space-between;}
+  .results-controls.active{display:flex;}
+  .filter-group{display:flex;gap:6px;flex-wrap:wrap;}
+  .filter-chip{
+    font-family:var(--font-display);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;
+    background:var(--panel);border:1px solid var(--line);color:var(--parchment-dim);
+    padding:6px 12px;border-radius:20px;cursor:pointer;min-height:30px;
+  }
+  .filter-chip[aria-pressed="true"]{background:var(--panel-2);border-color:var(--gold);color:var(--gold);}
+  .export-group{display:flex;gap:8px;}
+
+  /* ---------- results table ---------- */
+  .results-list{display:none;flex-direction:column;gap:8px;}
+  .results-list.active{display:flex;}
+  .result-row{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-md);
+    padding:12px 14px;display:flex;gap:12px;align-items:flex-start;
+  }
+  .result-row.r-washed-out{border-left:3px solid var(--rust);}
+  .result-row.r-passable{border-left:3px solid var(--verdigris);}
+  .result-row.r-uncertain{border-left:3px solid var(--slate);}
+  .result-row.r-skipped{border-left:3px solid var(--line);}
+  .result-main{flex:1;min-width:0;}
+  .result-url{font-family:var(--font-mono);font-size:.82rem;word-break:break-all;color:var(--parchment);}
+  .result-url a{color:inherit;text-decoration:none;}
+  .result-url a:hover{color:var(--gold);text-decoration:underline;}
+  .result-meta{font-size:.74rem;color:var(--parchment-faint);margin-top:4px;}
+  .result-refs{font-size:.72rem;color:var(--parchment-dim);margin-top:6px;}
+  .result-refs details summary{cursor:pointer;color:var(--parchment-faint);}
+  .result-refs a{color:var(--slate);text-decoration:none;}
+  .result-refs a:hover{text-decoration:underline;}
+  .result-refs ul{margin:6px 0 0;padding-left:16px;}
+  .result-refs li{margin-bottom:2px;word-break:break-all;}
+
+  /* ---------- signature: the survey stamp ---------- */
+  .stamp{
+    flex:0 0 auto;width:52px;height:52px;position:relative;display:flex;align-items:center;justify-content:center;
+  }
+  .stamp svg{width:100%;height:100%;}
+
+  /* ---------- empty state ---------- */
+  .empty-state{
+    text-align:center;padding:50px 20px;color:var(--parchment-faint);
+  }
+  .empty-state svg{opacity:.4;margin-bottom:14px;}
+  .empty-state p{font-size:.86rem;max-width:380px;margin:0 auto;}
+
+  /* ---------- toast ---------- */
+  .toast-container{position:fixed;bottom:18px;right:18px;left:18px;display:flex;flex-direction:column;align-items:flex-end;gap:8px;z-index:1000;pointer-events:none;}
+  .toast{
+    background:var(--panel-2);border:1px solid var(--line);color:var(--parchment);border-radius:var(--radius-md);
+    padding:10px 16px;font-size:.82rem;max-width:360px;opacity:0;transform:translateY(8px);
+    transition:opacity .25s ease,transform .25s ease;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+  .toast.success{border-left:3px solid var(--verdigris);}
+  .toast.danger{border-left:3px solid var(--rust);}
+  .toast.info{border-left:3px solid var(--slate);}
+
+  /* ---------- about ---------- */
+  .about{margin-top:44px;padding-top:22px;border-top:1px solid var(--line-soft);}
+  .about summary{
+    cursor:pointer;font-family:var(--font-display);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--parchment-dim);list-style:none;padding:6px 2px;
+  }
+  .about summary::-webkit-details-marker{display:none;}
+  .about summary::before{content:"\25B8 ";}
+  .about[open] summary::before{content:"\25BE ";}
+  .about p{font-size:.86rem;color:var(--parchment-dim);line-height:1.65;max-width:680px;}
+  .about strong{color:var(--parchment);}
+  .about code{font-family:var(--font-mono);font-size:.82rem;background:var(--panel);padding:1px 5px;border-radius:3px;color:var(--gold);}
+
+  footer.foot{margin-top:40px;font-size:.72rem;color:var(--parchment-faint);text-align:center;}
+  footer.foot a{color:var(--parchment-faint);}
+
+  @media (max-width:600px){
+    .app{padding:24px 14px 70px;}
+    .brand h1{font-size:1.3rem;}
+    .summary-stat{flex:1 1 42%;}
+    .result-row{flex-direction:column;}
+    .stamp{width:40px;height:40px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none!important;animation:none!important;}
+  }
+</style>
+</head>
+<body>
+  <noscript><p style="padding:24px;color:#e6ded0">Surveyor needs JavaScript enabled to run. It sends nothing anywhere without it.</p></noscript>
+  <main class="app">
+    <header class="top">
+      <div class="brand">
+        <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true">
+          <circle cx="20" cy="20" r="16" fill="none" stroke="var(--gold)" stroke-width="1.4" opacity=".6"/>
+          <path d="M20 7 L20 12 M20 28 L20 33 M7 20 L12 20 M28 20 L33 20" stroke="var(--gold)" stroke-width="1.4" opacity=".6"/>
+          <path d="M20 12 L24 20 L20 28 L16 20 Z" fill="var(--verdigris)"/>
+        </svg>
+        <h1>Surveyor</h1>
+      </div>
+      <p class="tagline">A link surveyor for your website — walks every page, charts every route, marks what's washed out.</p>
+    </header>
+
+    <div class="survey-panel">
+      <div class="mode-tabs" role="tablist" aria-label="Survey mode">
+        <button class="mode-tab" id="tabUrl" role="tab" aria-selected="true" aria-controls="panelUrl" tabindex="0">Survey a live URL</button>
+        <button class="mode-tab" id="tabPaste" role="tab" aria-selected="false" aria-controls="panelPaste" tabindex="-1">Paste page HTML</button>
+      </div>
+
+      <div id="panelUrl" role="tabpanel" aria-labelledby="tabUrl" tabindex="-1">
+        <div class="field-row">
+          <input type="url" id="urlInput" placeholder="https://your-site.example/" aria-label="Website URL to survey">
+          <button class="btn-primary" id="surveyBtn">Start survey</button>
+        </div>
+        <button class="advanced-toggle" id="advToggle" aria-expanded="false" aria-controls="advPanel">Survey settings</button>
+        <div class="advanced-panel" id="advPanel">
+          <div class="adv-field">
+            <label for="maxPagesInput">Max pages</label>
+            <input type="number" id="maxPagesInput" value="25" min="1" max="200" inputmode="numeric">
+          </div>
+          <div class="adv-field">
+            <label for="maxDepthInput">Max depth</label>
+            <input type="number" id="maxDepthInput" value="3" min="1" max="10">
+          </div>
+          <label class="adv-checkbox"><input type="checkbox" id="checkImagesInput" checked> Check images too</label>
+          <span class="adv-checkbox">Only pages on the same origin are crawled; external links are checked, never crawled.</span>
+        </div>
+      </div>
+
+      <div id="panelPaste" role="tabpanel" aria-labelledby="tabPaste" tabindex="-1" style="display:none;">
+        <div class="field-row">
+          <input type="url" id="baseUrlInput" placeholder="Base URL (for resolving relative links), e.g. https://your-site.example/page" aria-label="Base URL for resolving relative links">
+        </div>
+        <div class="field-row">
+          <textarea id="htmlPasteInput" placeholder="Paste the page's HTML source here (View Source, or Ctrl/Cmd+U)…" aria-label="Pasted HTML to check"></textarea>
+        </div>
+        <label class="adv-checkbox" style="margin-bottom:10px;"><input type="checkbox" id="checkImagesInputPaste" checked> Check images too</label>
+        <div class="field-row">
+          <button class="btn-primary" id="checkPasteBtn">Check these links</button>
+        </div>
+      </div>
+
+      <p class="ethics-note" id="ethicsNote">
+        <strong>Privacy and etiquette.</strong> Checking a link means your browser sends a request to it — including external sites, which see your IP address and normal browser headers (Referer is suppressed). Survey only sites you own or have permission to test. Checks are limited to a few at a time with short pauses, but Surveyor does not read <code>robots.txt</code>. Use the Stop button if a site slows down.
+      </p>
+      <p class="cors-note" id="corsNote">
+        <strong>Why two modes?</strong> Reading a page's actual content across domains is blocked by the browser (CORS) unless that site explicitly allows it — the same restriction every browser enforces on any page's JavaScript. "Survey a live URL" works when the site is your own (best: serve this file from the same origin) or allows cross-origin reads; otherwise, use "Paste page HTML" — copy the page's source (View Source) and the links are read from that instead of being fetched. Either way, every link found is then requested from your browser to check it.
+      </p>
+    </div>
+
+    <div class="progress-panel" id="progressPanel">
+      <div class="progress-head"><div class="progress-line"><strong id="progressPages">0</strong> pages walked · <strong id="progressLinks">0</strong> routes charted · <strong id="progressBroken">0</strong> washed out</div>
+      <button class="btn-secondary" id="stopBtn" type="button">Stop</button></div>
+      <div class="progress-bar-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar-fill" id="progressBarFill"></div></div>
+      <div class="progress-current-url" id="progressCurrentUrl"></div>
+    </div>
+
+    <div class="summary-strip" id="summaryStrip"></div>
+
+    <div class="results-controls" id="resultsControls">
+      <div class="filter-group" id="filterGroup" role="group" aria-label="Filter results"></div>
+      <div class="export-group">
+        <button class="btn-secondary" id="copyReportBtn">Copy report</button>
+        <button class="btn-secondary" id="exportCsvBtn">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="results-list" id="resultsList"></div>
+
+    <div class="empty-state" id="emptyState">
+      <svg width="56" height="56" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M20 7 L20 12 M20 28 L20 33 M7 20 L12 20 M28 20 L33 20" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M20 12 L24 20 L20 28 L16 20 Z" fill="none" stroke="currentColor" stroke-width="1.2"/>
+      </svg>
+      <p>No survey run yet. Point it at a URL, or paste a page's HTML, to chart its routes and find what's washed out.</p>
+    </div>
+
+    <details class="about">
+      <summary>About Surveyor</summary>
+      <p>Surveyor reads one page, follows every <code>&lt;a href&gt;</code> it finds (and, optionally, every <code>&lt;img src&gt;</code>), and checks whether each one resolves. Pages on the <strong>same origin</strong> as the start page are walked in turn — up to the page and depth limits you set. It reads static HTML only: links added by JavaScript, <code>srcset</code>, <code>&lt;link&gt;</code>, scripts, stylesheets, iframes and CSS backgrounds are not seen.</p>
+      <p>Every result lands in one of four states. <strong>Passable</strong> — a real 2xx response, read from the same origin (or a site that allows cross-origin reads). <strong>Washed out</strong> — an error status, a timeout, or a network failure (the browser could not reach it at all). <strong>Uncertain</strong> — a cross-origin link that answered in some form, but the browser's CORS rules hide the status code: <strong>an external link that returns 404 is still shown as Uncertain</strong>, so this tool cannot find dead pages on other sites, only unreachable hosts. <strong>Skipped</strong> — <code>mailto:</code>, <code>tel:</code>, <code>javascript:</code>, same-page anchors and the like, plus anything beyond the route limit or left unchecked when you pressed Stop.</p>
+      <p>Washed-out results for external links can be false alarms: a blocking browser extension, an ad blocker, a VPN, mixed content (checking an <code>http://</code> site from an <code>https://</code> page) or a firewall also look like "unreachable". Re-check before editing a page.</p>
+      <p>Each result also lists which page(s) reference it, since that's what you actually need to go fix.</p>
+      <p><strong>Privacy.</strong> Surveyor has no server, no analytics, no cookies and saves nothing between visits. But it is not "local only": to check a link, your browser sends a HEAD request (sometimes GET) to that link's site, including external sites, which can see your IP address and normal browser headers. Cookies are not sent to third parties and the Referer is suppressed; requests to the surveyed site may carry an <code>Origin</code> header naming the page that hosts Surveyor. Reports (copy/CSV) are produced in your browser and go nowhere unless you save or paste them.</p>
+      <p><strong>Etiquette.</strong> Only survey sites you own or are allowed to test. Surveyor checks at most four links at once with short pauses and caps each run (pages, depth and total routes), but it does not read <code>robots.txt</code> and it does not rate-limit per host beyond that. Stop the run if a server struggles.</p>
+    </details>
+
+    <footer class="foot">Surveyor · single file, no dependencies, no analytics or cookies · CC0 1.0 Universal</footer>
+  </main>
+
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  var $ = function(sel, el){ return (el || document).querySelector(sel); };
+  var $$ = function(sel, el){ return Array.prototype.slice.call((el || document).querySelectorAll(sel)); };
+
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  // ---------- toast ----------
+  function showToast(msg, kind){
+    var container = $('#toastContainer');
+    var el = document.createElement('div');
+    el.className = 'toast ' + (kind || 'info');
+    el.textContent = msg;
+    container.appendChild(el);
+    requestAnimationFrame(function(){ el.classList.add('show'); });
+    setTimeout(function(){
+      el.classList.remove('show');
+      setTimeout(function(){ el.remove(); }, 300);
+    }, 3200);
+  }
+
+  // ---------- state ----------
+  var state = {
+    running: false,
+    startUrl: null,
+    startOrigin: null,
+    results: [],       // { url, type, status, code, reason, referencedBy: [pageUrl,...] }
+    resultIndexByKey: {}, // (type+'|'+url) -> index into results
+    pagesVisited: 0,
+    truncated: false,
+    filter: 'all'
+  };
+
+  var CHECK_BATCH_SIZE = 4;       // parallel checks; deliberately small (politeness)
+  var BATCH_PAUSE_MS = 250;       // pause between batches
+  var EXTERNAL_TIMEOUT_MS = 9000;
+  var INTERNAL_TIMEOUT_MS = 9000;
+  var PAGE_TIMEOUT_MS = 15000;    // page fetch + body read
+  var MAX_PAGE_BYTES = 5 * 1024 * 1024;
+  var MAX_ROUTES = 3000;          // distinct URLs kept per run (memory + politeness)
+  var MAX_ROWS_SHOWN = 500;       // rows rendered at once; CSV has everything
+
+  // One controller per run: Stop aborts every in-flight request at once.
+  var run = { controller: null, cancelled: false };
+
+  var SKIP_SCHEMES = ['mailto:', 'tel:', 'javascript:', 'data:', 'blob:', 'sms:', 'fax:', 'ftp:', 'file:'];
+  var NON_HTML_EXTENSIONS = ['.pdf','.jpg','.jpeg','.png','.gif','.svg','.webp','.bmp','.ico','.zip','.rar','.7z','.gz','.tar',
+    '.mp3','.mp4','.mov','.avi','.wav','.ogg','.webm','.doc','.docx','.xls','.xlsx','.ppt','.pptx','.exe','.dmg','.apk',
+    '.woff','.woff2','.ttf','.eot','.otf','.css','.js','.json','.xml','.csv','.txt','.rss','.atom'];
+
+  // ---------- URL helpers ----------
+  function resolveUrl(href, base){
+    // new URL(href, null) throws -- null coerces to the string "null" as an invalid base,
+    // even when href is already absolute and doesn't actually need one. undefined is what
+    // correctly means "no base" to the URL constructor.
+    try { return new URL(href, base || undefined).href; } catch(e) { return null; }
+  }
+
+  function getScheme(rawHref){
+    var m = String(rawHref || '').trim().match(/^([a-zA-Z][a-zA-Z0-9+.-]*:)/);
+    return m ? m[1].toLowerCase() : null;
+  }
+
+  // Returns a skip reason string if this href shouldn't be checked over HTTP, or null if
+  // it should be checked. Kept separate from resolution so a malformed href is still
+  // reported (as "unparseable"), not silently dropped from the survey.
+  function classifySkip(rawHref, resolvedUrl, pageUrl){
+    var trimmed = String(rawHref || '').trim();
+    if (trimmed === '' || trimmed === '#') return 'empty';
+    var scheme = getScheme(trimmed);
+    if (scheme && SKIP_SCHEMES.indexOf(scheme) !== -1) return 'non-http';
+    if (!resolvedUrl) return 'unparseable';
+    var r;
+    try { r = new URL(resolvedUrl); } catch(e) { return 'unparseable'; }
+    if (r.protocol !== 'http:' && r.protocol !== 'https:') return 'non-http';
+    if (pageUrl && trimmed.charAt(0) === '#') {
+      try {
+        var p = new URL(pageUrl);
+        if (r.origin === p.origin && r.pathname === p.pathname && r.search === p.search) return 'same-page-anchor';
+      } catch(e) {}
+    }
+    return null;
+  }
+
+  function stripFragment(url){
+    try { var u = new URL(url); u.hash = ''; return u.href; } catch(e) { return url; }
+  }
+
+  function isLikelyNonHtml(url){
+    try {
+      var path = new URL(url).pathname.toLowerCase();
+      return NON_HTML_EXTENSIONS.some(function(ext){ return path.length > ext.length && path.slice(-ext.length) === ext; });
+    } catch(e) { return false; }
+  }
+
+  function sameOrigin(url, originUrl){
+    if (!url || !originUrl) return false;   // paste mode without a base URL: nothing is "same origin"
+    try { return new URL(url).origin === new URL(originUrl).origin; } catch(e) { return false; }
+  }
+
+  // Only http(s) URLs may become clickable links; anything else (javascript:, data:, relative junk) is shown as text.
+  function safeHref(url){
+    try {
+      var u = new URL(url);
+      return (u.protocol === 'http:' || u.protocol === 'https:') ? u.href : null;
+    } catch(e) { return null; }
+  }
+  function linkOrText(url){
+    var h = safeHref(url);
+    return h ? '<a href="' + escapeHtml(h) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(url) + '</a>' : escapeHtml(url);
+  }
+
+  // ---------- link extraction ----------
+  // doc: a Document (from DOMParser or an iframe-free fetch+parse). baseUrl: what relative
+  // hrefs resolve against. Returns raw findings before skip-classification.
+  function extractLinks(doc, baseUrl, includeImages){
+    var found = [];
+    var baseEl = doc.querySelector('base[href]');
+    if (baseEl) {
+      var b = resolveUrl(baseEl.getAttribute('href'), baseUrl);
+      if (b && /^https?:/i.test(b)) baseUrl = b;
+    }
+    $$('a[href]', doc).forEach(function(a){
+      var raw = a.getAttribute('href');
+      found.push({ rawHref: raw, resolvedUrl: resolveUrl(raw, baseUrl), type: 'link' });
+    });
+    if (includeImages) {
+      $$('img[src]', doc).forEach(function(img){
+        var raw = img.getAttribute('src');
+        if (!raw) return;
+        found.push({ rawHref: raw, resolvedUrl: resolveUrl(raw, baseUrl), type: 'image' });
+      });
+    }
+    return found;
+  }
+
+  // ---------- result bookkeeping ----------
+  function resultKey(type, url){ return type + '|' + url; }
+
+  function recordResult(type, url, referencingPage){
+    var key = resultKey(type, url);
+    var idx = state.resultIndexByKey[key];
+    if (idx == null && state.results.length >= MAX_ROUTES) {
+      state.truncated = true;
+      return { url: url, type: type, status: 'skipped', code: null, reason: 'route limit reached', referencedBy: [] }; // not stored
+    }
+    if (idx == null) {
+      idx = state.results.length;
+      state.resultIndexByKey[key] = idx;
+      state.results.push({ url: url, type: type, status: 'pending', code: null, reason: null, referencedBy: [] });
+    }
+    var entry = state.results[idx];
+    if (referencingPage && entry.referencedBy.indexOf(referencingPage) === -1) {
+      entry.referencedBy.push(referencingPage);
+    }
+    return entry;
+  }
+
+  function recordSkipped(type, url, referencingPage, reason){
+    var entry = recordResult(type, url || '(unresolvable)', referencingPage);
+    entry.status = 'skipped';
+    entry.reason = reason;
+  }
+
+  // ---------- checking ----------
+  // fetch with a hard timeout, tied to the run's Stop button. Rejections carry .timedOut.
+  // If readBody is true the timeout also covers reading the body (resolves to { res, text }).
+  function fetchT(url, init, ms, readBody){
+    var ctl = new AbortController();
+    var timedOut = false;
+    var timer = setTimeout(function(){ timedOut = true; ctl.abort(); }, ms);
+    var parent = run.controller && run.controller.signal;
+    var onAbort = function(){ ctl.abort(); };
+    if (parent) { if (parent.aborted) ctl.abort(); else parent.addEventListener('abort', onAbort); }
+    function cleanup(){ clearTimeout(timer); if (parent) parent.removeEventListener('abort', onAbort); }
+    var opts = {};
+    Object.keys(init || {}).forEach(function(k){ opts[k] = init[k]; });
+    opts.signal = ctl.signal;
+    opts.referrerPolicy = 'no-referrer';
+    var p;
+    try { p = fetch(url, opts); } catch(syncErr) { cleanup(); return Promise.reject(syncErr); }
+    return p.then(function(res){
+      if (!readBody) { cleanup(); return res; }
+      if (!res.ok) { cancelBody(res); cleanup(); return { res: res, text: null }; }
+      var len = parseInt(res.headers && res.headers.get ? res.headers.get('content-length') : '', 10);
+      if (len > MAX_PAGE_BYTES) { cancelBody(res); cleanup(); return { res: res, text: null, tooBig: true }; }
+      return res.text().then(function(text){ cleanup(); return { res: res, text: text }; });
+    }).catch(function(err){
+      cleanup();
+      if (err && typeof err === 'object') err.timedOut = timedOut;
+      throw err;
+    });
+  }
+
+  function cancelBody(res){
+    try { if (res && res.body && res.body.cancel) res.body.cancel().catch(function(){}); } catch(e) {}
+  }
+
+  var STOPPED = { status: 'skipped', code: null, reason: 'stopped' };
+
+  // Same-origin as the survey's start URL: a real fetch works when this page is served from
+  // that origin (or the site sends CORS headers), so it can report an actual status code.
+  // If the browser blocks the read (TypeError), fall back to a no-cors probe: that tells
+  // "unreachable" (washed out) apart from "answered, but status hidden" (uncertain).
+  function checkInternal(url){
+    if (typeof fetch !== 'function') return Promise.resolve({ status: 'uncertain', code: null, reason: 'fetch unavailable' });
+    var GET_RETRY = { 400: 1, 403: 1, 405: 1, 501: 1 };  // servers that mishandle HEAD but serve GET
+    return fetchT(url, { method: 'HEAD', redirect: 'follow', cache: 'no-store' }, INTERNAL_TIMEOUT_MS)
+      .then(function(res){
+        if (GET_RETRY[res.status]) {
+          // retry with GET before concluding anything, so a route isn't marked washed out on a method quirk
+          return fetchT(url, { method: 'GET', redirect: 'follow', cache: 'no-store' }, INTERNAL_TIMEOUT_MS)
+            .then(function(r2){ cancelBody(r2); return r2; });
+        }
+        return res;
+      })
+      .then(function(res){
+        return { status: res.ok ? 'passable' : 'washed-out', code: res.status, reason: res.ok ? null : ('HTTP ' + res.status) };
+      })
+      .catch(function(err){
+        if (run.cancelled) return STOPPED;
+        if (err && err.timedOut) return { status: 'washed-out', code: null, reason: 'timed out' };
+        return checkExternal(url);
+      });
+  }
+
+  // Cross-origin: the browser blocks reading the actual response (CORS), so a no-cors
+  // probe can only ever prove failure, never success. An opaque (non-error) result means
+  // "something answered" -- reported as uncertain, not passable, because that's the
+  // honest ceiling of what this can confirm. Cookies are never sent (credentials: omit).
+  function checkExternal(url, timeoutMs){
+    if (typeof fetch !== 'function' || typeof AbortController !== 'function') {
+      return Promise.resolve({ status: 'uncertain', code: null, reason: 'cross-origin, unverifiable' });
+    }
+    return fetchT(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-store', credentials: 'omit' }, timeoutMs || EXTERNAL_TIMEOUT_MS)
+      .then(function(){ return { status: 'uncertain', code: null, reason: 'cross-origin, unverifiable' }; })
+      .catch(function(err){
+        if (run.cancelled) return STOPPED;
+        return { status: 'washed-out', code: null, reason: err && err.timedOut ? 'timed out' : 'unreachable' };
+      });
+  }
+
+  function checkOneResult(entry){
+    var urlNoFrag = stripFragment(entry.url);
+    var checker = sameOrigin(entry.url, state.startOrigin) ? checkInternal : checkExternal;
+    return checker(urlNoFrag).then(function(outcome){
+      entry.status = outcome.status;
+      entry.code = outcome.code;
+      entry.reason = outcome.reason;
+    });
+  }
+
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+  function checkAllPending(onProgress){
+    var pending = state.results.filter(function(r){ return r.status === 'pending'; });
+    var total = pending.length, done = 0;
+    function runBatch(startIdx){
+      if (run.cancelled) return Promise.resolve();
+      var batch = pending.slice(startIdx, startIdx + CHECK_BATCH_SIZE);
+      if (!batch.length) return Promise.resolve();
+      return Promise.all(batch.map(function(entry){
+        return checkOneResult(entry).then(function(){
+          done++;
+          if (onProgress) onProgress(done, total, entry.url);
+        });
+      })).then(function(){
+        return sleep(BATCH_PAUSE_MS);
+      }).then(function(){ return runBatch(startIdx + CHECK_BATCH_SIZE); });
+    }
+    return runBatch(0);
+  }
+
+  // Anything still unchecked after Stop is marked skipped, never left looking "pending" or guessed.
+  function markUnchecked(){
+    state.results.forEach(function(r){
+      if (r.status === 'pending') { r.status = 'skipped'; r.reason = 'stopped'; }
+    });
+  }
+
+  // ---------- page crawl (Mode: live URL) ----------
+  function crawlSite(startUrl, opts, onProgress){
+    var maxPages = opts.maxPages, maxDepth = opts.maxDepth, includeImages = opts.includeImages;
+    var visited = {};
+    var queue = [{ url: startUrl, depth: 0 }];
+    var queuedSet = {}; queuedSet[startUrl] = true;
+    var pagesVisited = 0;
+    var startFailed = null;
+    var site = startUrl;   // origin reference for "same site"; updated if the start URL redirects elsewhere
+    var redirectedTo = null;
+
+    function markPage(url, status, code, reason){
+      var idx = state.resultIndexByKey[resultKey('link', url)];
+      if (idx != null && state.results[idx].status === 'pending') {
+        var e = state.results[idx];
+        e.status = status; e.code = code; e.reason = reason;
+      }
+    }
+
+    function step(){
+      if (run.cancelled || !queue.length || pagesVisited >= maxPages) return Promise.resolve();
+      var item = queue.shift();
+      if (visited[item.url]) return step();
+      visited[item.url] = true;
+      pagesVisited++;
+      state.pagesVisited = pagesVisited;
+      if (onProgress) onProgress(pagesVisited, state.results.length, item.url);
+
+      return fetchT(item.url, { method: 'GET', redirect: 'follow', cache: 'no-store' }, PAGE_TIMEOUT_MS, true)
+        .then(function(r){
+          var res = r.res;
+          if (!res.ok) {
+            if (item.url === startUrl) startFailed = 'HTTP ' + res.status;
+            return null;
+          }
+          var ct = res.headers && res.headers.get ? (res.headers.get('content-type') || '') : '';
+          if (ct && ct.indexOf('html') === -1) { markPage(item.url, 'passable', res.status, null); return null; }
+          if (r.tooBig) { markPage(item.url, 'passable', res.status, null); return null; }
+          markPage(item.url, 'passable', res.status, null);   // fetched fine: no need to HEAD it again later
+          if (item.url === startUrl && res.url && !sameOrigin(res.url, startUrl)) {
+            site = res.url; redirectedTo = res.url; state.startOrigin = res.url;
+          }
+          return { html: r.text, base: res.url || item.url };
+        })
+        .catch(function(err){
+          if (run.cancelled) return null;
+          if (item.url === startUrl) startFailed = (err && err.timedOut) ? 'timed out' : 'could not be reached (likely blocked by CORS if this is not your own site)';
+          return null;
+        })
+        .then(function(page){
+          if (page == null) return step();
+          var doc;
+          try {
+            var parser = new DOMParser();   // inert document: no scripts run, no subresources load
+            doc = parser.parseFromString(page.html, 'text/html');
+          } catch(e) { return step(); }
+
+          var found = extractLinks(doc, page.base, includeImages);
+          found.forEach(function(f){
+            var skip = classifySkip(f.rawHref, f.resolvedUrl, item.url);
+            if (skip) { recordSkipped(f.type, f.resolvedUrl || f.rawHref, item.url, skip); return; }
+            recordResult(f.type, f.resolvedUrl, item.url);
+            if (onProgress) onProgress(pagesVisited, state.results.length, item.url);
+
+            var isPage = f.type === 'link' && !isLikelyNonHtml(f.resolvedUrl);
+            var strippedNoFrag = stripFragment(f.resolvedUrl);
+            if (isPage && sameOrigin(f.resolvedUrl, site) &&
+                item.depth + 1 <= maxDepth && !visited[strippedNoFrag] && !queuedSet[strippedNoFrag]) {
+              queuedSet[strippedNoFrag] = true;
+              queue.push({ url: strippedNoFrag, depth: item.depth + 1 });
+            }
+          });
+          return step();
+        });
+    }
+
+    return step().then(function(){
+      return { pagesVisited: pagesVisited, startFailed: startFailed, redirectedTo: redirectedTo };
+    });
+  }
+
+  // ---------- paste-HTML mode ----------
+  function checkPastedHtml(htmlText, baseUrl, includeImages){
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlText, 'text/html');
+    var found = extractLinks(doc, baseUrl, includeImages);
+    var pageLabel = baseUrl || '(pasted page)';
+    found.forEach(function(f){
+      var skip = classifySkip(f.rawHref, f.resolvedUrl, baseUrl);
+      if (skip) { recordSkipped(f.type, f.resolvedUrl || f.rawHref, pageLabel, skip); return; }
+      recordResult(f.type, f.resolvedUrl, pageLabel);
+    });
+    state.pagesVisited = 1;
+  }
+  // ---------- signature element: the survey stamp ----------
+  var STAMP_DEFS = {
+    'passable':  { color: 'var(--verdigris)', bg: 'var(--verdigris-bg)', glyph: 'M12 20 L17 25 L28 13', label: 'Passable' },
+    'washed-out':{ color: 'var(--rust)', bg: 'var(--rust-bg)', glyph: 'M13 13 L27 27 M27 13 L13 27', label: 'Washed out' },
+    'uncertain': { color: 'var(--slate)', bg: 'var(--slate-bg)', glyph: null, label: 'Uncertain' },
+    'skipped':   { color: 'var(--parchment-faint)', bg: 'transparent', glyph: 'M13 20 L27 20', label: 'Skipped' },
+    'pending':   { color: 'var(--parchment-faint)', bg: 'transparent', glyph: null, label: 'Checking\u2026' }
+  };
+
+  function stampSvg(status){
+    var d = STAMP_DEFS[status] || STAMP_DEFS.pending;
+    var rot = ((status.length * 13) % 9) - 4; // small deterministic per-status tilt, hand-stamped feel without randomness shifting on every render
+    var inner = '<circle cx="20" cy="20" r="15" fill="' + d.bg + '" stroke="' + d.color + '" stroke-width="1.6" stroke-dasharray="2.5 1.8" opacity=".9"/>';
+    if (d.glyph) {
+      inner += '<path d="' + d.glyph + '" stroke="' + d.color + '" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+    } else if (status === 'uncertain') {
+      inner += '<text x="20" y="26" text-anchor="middle" font-family="Georgia,serif" font-size="17" font-weight="700" fill="' + d.color + '">?</text>';
+    } else if (status === 'pending') {
+      inner += '<circle cx="20" cy="20" r="4" fill="' + d.color + '" opacity=".6"/>';
+    }
+    return '<svg viewBox="0 0 40 40" role="img" aria-label="' + d.label + '" style="transform:rotate(' + rot + 'deg)">' + inner + '</svg>';
+  }
+
+  // ---------- rendering ----------
+  function statusCounts(){
+    var c = { passable: 0, 'washed-out': 0, uncertain: 0, skipped: 0, pending: 0 };
+    state.results.forEach(function(r){ c[r.status] = (c[r.status] || 0) + 1; });
+    return c;
+  }
+
+  function renderSummary(){
+    var c = statusCounts();
+    var strip = $('#summaryStrip');
+    strip.className = 'summary-strip' + (state.results.length ? ' active' : '');
+    if (!state.results.length) { strip.innerHTML = ''; return; }
+    strip.innerHTML =
+      '<div class="summary-stat"><span class="num">' + state.pagesVisited + '</span><span class="lbl">Pages surveyed</span></div>' +
+      '<div class="summary-stat"><span class="num">' + state.results.length + '</span><span class="lbl">Routes charted</span></div>' +
+      '<div class="summary-stat washed-out"><span class="num">' + c['washed-out'] + '</span><span class="lbl">Washed out</span></div>' +
+      '<div class="summary-stat uncertain"><span class="num">' + c.uncertain + '</span><span class="lbl">Uncertain</span></div>' +
+      '<div class="summary-stat passable"><span class="num">' + c.passable + '</span><span class="lbl">Passable</span></div>';
+  }
+
+  var FILTERS = [
+    { key: 'all', label: 'All' },
+    { key: 'washed-out', label: 'Washed out' },
+    { key: 'uncertain', label: 'Uncertain' },
+    { key: 'passable', label: 'Passable' },
+    { key: 'skipped', label: 'Skipped' }
+  ];
+
+  function renderFilterChips(){
+    var group = $('#filterGroup');
+    var c = statusCounts();
+    var countFor = { all: state.results.length, 'washed-out': c['washed-out'], uncertain: c.uncertain, passable: c.passable, skipped: c.skipped };
+    group.innerHTML = FILTERS.map(function(f){
+      return '<button class="filter-chip" data-filter="' + f.key + '" aria-pressed="' + (state.filter === f.key) + '">' +
+        f.label + ' (' + countFor[f.key] + ')</button>';
+    }).join('');
+  }
+
+  function renderResultsList(){
+    var listEl = $('#resultsList');
+    var allRows = state.results.filter(function(r){ return state.filter === 'all' || r.status === state.filter; });
+    var rows = allRows;
+    // washed-out first (the thing you're here to find), then uncertain, then passable, then skipped
+    var order = { 'washed-out': 0, uncertain: 1, pending: 2, passable: 3, skipped: 4 };
+    rows = rows.slice().sort(function(a, b){ return (order[a.status] - order[b.status]) || a.url.localeCompare(b.url); });
+    var hiddenRows = Math.max(0, rows.length - MAX_ROWS_SHOWN);
+    if (hiddenRows) rows = rows.slice(0, MAX_ROWS_SHOWN);
+
+    if (!rows.length) {
+      listEl.className = 'results-list';
+      $('#emptyState').style.display = state.results.length ? 'none' : '';
+      if (state.results.length) {
+        listEl.className = 'results-list active';
+        listEl.innerHTML = '<div class="empty-state"><p>Nothing matches this filter.</p></div>';
+      }
+      return;
+    }
+    $('#emptyState').style.display = 'none';
+    listEl.className = 'results-list active';
+    listEl.innerHTML = rows.map(function(r){
+      var codeLabel = r.code ? ('HTTP ' + r.code) : (r.reason || (r.status === 'pending' ? 'checking\u2026' : ''));
+      var typeLabel = r.type === 'image' ? 'image' : 'link';
+      var refsHtml = '';
+      if (r.referencedBy.length) {
+        var items = r.referencedBy.slice(0, 30).map(function(p){
+          return '<li>' + linkOrText(p) + '</li>';
+        }).join('');
+        var overflow = r.referencedBy.length > 30 ? '<li>\u2026 and ' + (r.referencedBy.length - 30) + ' more</li>' : '';
+        refsHtml = '<div class="result-refs"><details><summary>Referenced on ' + r.referencedBy.length + ' page' + (r.referencedBy.length === 1 ? '' : 's') + '</summary><ul>' + items + overflow + '</ul></details></div>';
+      }
+      return '<div class="result-row r-' + r.status + '">' +
+        '<div class="stamp">' + stampSvg(r.status) + '</div>' +
+        '<div class="result-main">' +
+          '<div class="result-url">' + linkOrText(r.url) + '</div>' +
+          '<div class="result-meta">' + typeLabel + (codeLabel ? ' \u00b7 ' + escapeHtml(codeLabel) : '') + '</div>' +
+          refsHtml +
+        '</div>' +
+      '</div>';
+    }).join('') + (hiddenRows ? '<p class="limit-note">Showing the first ' + MAX_ROWS_SHOWN + ' of ' + allRows.length + ' rows. Export CSV for the full list.</p>' : '') +
+      (state.truncated ? '<p class="limit-note">Route limit reached (' + MAX_ROUTES + '): further links were not recorded.</p>' : '');
+  }
+
+  function render(){
+    renderSummary();
+    renderFilterChips();
+    renderResultsList();
+    $('#resultsControls').className = 'results-controls' + (state.results.length ? ' active' : '');
+  }
+
+  function renderProgress(pagesLabel, linksLabel, brokenLabel, currentUrl, pct){
+    var panel = $('#progressPanel');
+    panel.className = 'progress-panel active';
+    $('#progressPages').textContent = pagesLabel;
+    $('#progressLinks').textContent = linksLabel;
+    $('#progressBroken').textContent = brokenLabel;
+    $('#progressCurrentUrl').textContent = currentUrl || '';
+    var pc = (pct == null ? 0 : Math.min(100, Math.round(pct * 100)));
+    $('#progressBarFill').style.width = pc + '%';
+    var track = $('#progressPanel .progress-bar-track');
+    if (track) track.setAttribute('aria-valuenow', String(pc));
+  }
+
+  function hideProgress(){
+    $('#progressPanel').className = 'progress-panel';
+  }
+
+  // ---------- export ----------
+  // CSV: neutralise spreadsheet formulas (cells starting with = + - @ TAB CR get a leading apostrophe),
+  // then quote anything containing a comma, quote or line break.
+  function csvEscape(v){
+    var s = String(v == null ? '' : v);
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    if (/[",\r\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function exportCsv(){
+    if (!state.results.length) { showToast('Nothing to export yet', 'info'); return; }
+    var rows = [['URL', 'Type', 'Status', 'Detail', 'Referenced by']];
+    state.results.forEach(function(r){
+      var detail = r.code ? ('HTTP ' + r.code) : (r.reason || '');
+      rows.push([r.url, r.type, r.status, detail, r.referencedBy.join(' | ')]);
+    });
+    var csv = '\ufeff' + rows.map(function(row){ return row.map(csvEscape).join(','); }).join('\r\n');
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'surveyor-report-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    showToast('CSV exported', 'success');
+  }
+
+  function copyReport(){
+    if (!state.results.length) { showToast('Nothing to report yet', 'info'); return; }
+    var c = statusCounts();
+    var lines = [];
+    lines.push('SURVEYOR REPORT \u2014 ' + new Date().toLocaleString());
+    lines.push(state.pagesVisited + ' pages surveyed, ' + state.results.length + ' routes charted');
+    lines.push(c['washed-out'] + ' washed out \u00b7 ' + c.uncertain + ' uncertain \u00b7 ' + c.passable + ' passable \u00b7 ' + c.skipped + ' skipped');
+    lines.push('(Cross-origin links that answer are "uncertain": their HTTP status is hidden by CORS, so 404s on other sites are not detected.)');
+    lines.push('');
+    var broken = state.results.filter(function(r){ return r.status === 'washed-out'; });
+    if (broken.length) {
+      lines.push('WASHED OUT:');
+      broken.forEach(function(r){
+        var detail = r.code ? ('HTTP ' + r.code) : (r.reason || '');
+        lines.push('- [' + r.type + '] ' + r.url + ' (' + detail + ')');
+        r.referencedBy.slice(0, 10).forEach(function(p){ lines.push('    on: ' + p); });
+        if (r.referencedBy.length > 10) lines.push('    \u2026 and ' + (r.referencedBy.length - 10) + ' more');
+      });
+    } else {
+      lines.push('No washed-out routes found.');
+    }
+    var text = lines.join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        showToast('Report copied', 'success');
+      }).catch(function(){
+        showToast('Could not copy \u2014 clipboard access blocked', 'danger');
+      });
+    } else {
+      showToast('Clipboard access not available here', 'danger');
+    }
+  }
+  // Full render() rebuilds the whole filtered/sorted results list -- cheap for a handful
+  // of results, not for checking many links back-to-back. Debounce it during a bulk check
+  // phase (learned the hard way building a sibling app); the lightweight progress-panel
+  // update still happens on every tick since that's just a few text nodes.
+  var renderTimer = null;
+  function scheduleRender(){
+    if (renderTimer) return;
+    renderTimer = setTimeout(function(){ renderTimer = null; render(); }, 120);
+  }
+
+  function resetState(){
+    state.results = [];
+    state.resultIndexByKey = {};
+    state.pagesVisited = 0;
+    state.truncated = false;
+    state.filter = 'all';
+  }
+
+  function clampInt(val, min, max, fallback){
+    var n = parseInt(val, 10);
+    if (isNaN(n)) return fallback;
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function beginRun(){
+    run.controller = new AbortController();
+    run.cancelled = false;
+  }
+  function endRun(){
+    run.controller = null;
+  }
+
+  function setRunning(isRunning, btnId, idleLabel, busyLabel){
+    state.running = isRunning;
+    var btn = $(btnId);
+    btn.disabled = isRunning;
+    btn.textContent = isRunning ? busyLabel : idleLabel;
+  }
+
+  // ---------- orchestration: live URL mode ----------
+  function finishUi(btnId, idle, busy, doneMsg){
+    markUnchecked();
+    endRun();
+    hideProgress();
+    render();
+    setRunning(false, btnId, idle, busy);
+    showToast(run.cancelled ? ('Stopped \u2014 ' + state.results.length + ' routes charted, unchecked ones marked skipped') : doneMsg, run.cancelled ? 'info' : 'success');
+  }
+
+  function runSurvey(){
+    if (state.running) return;
+    var raw = $('#urlInput').value.trim();
+    var normalized;
+    try {
+      normalized = stripFragment(new URL(raw).href);
+      if (!/^https?:$/.test(new URL(normalized).protocol)) throw new Error('scheme');
+    } catch(e) { showToast('Enter a valid http(s) URL to survey', 'danger'); return; }
+
+    resetState();
+    beginRun();
+    state.startUrl = normalized;
+    state.startOrigin = normalized;
+    setRunning(true, '#surveyBtn', 'Start survey', 'Surveying\u2026');
+    render();
+    renderProgress('0', '0', '0', normalized, 0);
+
+    var opts = {
+      maxPages: clampInt($('#maxPagesInput').value, 1, 200, 25),
+      maxDepth: clampInt($('#maxDepthInput').value, 1, 10, 3),
+      includeImages: $('#checkImagesInput').checked
+    };
+
+    crawlSite(normalized, opts, function(pagesVisited, linksFound, currentUrl){
+      renderProgress(String(pagesVisited), String(linksFound), '0', currentUrl, opts.maxPages ? pagesVisited / opts.maxPages : 0);
+    }).then(function(crawlResult){
+      if (crawlResult.startFailed) {
+        showToast('The starting page itself did not load: ' + crawlResult.startFailed, 'danger');
+      }
+      if (crawlResult.redirectedTo) {
+        showToast('The start URL redirected to ' + crawlResult.redirectedTo + ' \u2014 surveying that site.', 'info');
+      }
+      if (state.truncated) showToast('Route limit reached (' + MAX_ROUTES + '); further links were not recorded.', 'info');
+      render();
+      renderProgress(String(state.pagesVisited), String(state.results.length), '0', 'Checking charted routes\u2026', 0);
+      return checkAllPending(function(done, total, currentUrl){
+        var c = statusCounts();
+        renderProgress(String(state.pagesVisited), String(state.results.length), String(c['washed-out']), currentUrl, total ? done / total : 1);
+        scheduleRender();
+      });
+    }).then(function(){
+      finishUi('#surveyBtn', 'Start survey', 'Surveying\u2026', 'Survey complete \u2014 ' + state.pagesVisited + ' pages, ' + state.results.length + ' routes charted');
+    }).catch(function(err){
+      markUnchecked(); endRun(); hideProgress(); render();
+      setRunning(false, '#surveyBtn', 'Start survey', 'Surveying\u2026');
+      showToast('Survey stopped unexpectedly: ' + ((err && err.message) || 'unknown error'), 'danger');
+    });
+  }
+
+  // ---------- orchestration: paste-HTML mode ----------
+  function runPasteCheck(){
+    if (state.running) return;
+    var html = $('#htmlPasteInput').value;
+    if (!html || !html.trim()) { showToast('Paste a page\u2019s HTML first', 'danger'); return; }
+    var baseRaw = $('#baseUrlInput').value.trim();
+    var baseUrl = null;
+    if (baseRaw) {
+      try {
+        baseUrl = new URL(baseRaw).href;
+        if (!/^https?:/i.test(baseUrl)) throw new Error('scheme');
+      } catch(e) { showToast('That base URL doesn\u2019t look valid (use http:// or https://)', 'danger'); return; }
+    }
+
+    resetState();
+    beginRun();
+    state.startUrl = baseUrl;
+    state.startOrigin = baseUrl;   // may be null: sameOrigin() treats null as "no same-origin links"
+    setRunning(true, '#checkPasteBtn', 'Check these links', 'Checking\u2026');
+
+    try {
+      checkPastedHtml(html, baseUrl, $('#checkImagesInputPaste').checked);
+    } catch(e) {
+      endRun();
+      setRunning(false, '#checkPasteBtn', 'Check these links', 'Checking\u2026');
+      showToast('Could not read that HTML: ' + ((e && e.message) || 'parse error'), 'danger');
+      return;
+    }
+    render();
+    if (!state.results.length) {
+      endRun();
+      hideProgress();
+      setRunning(false, '#checkPasteBtn', 'Check these links', 'Checking\u2026');
+      showToast('No checkable links found in that HTML', 'info');
+      return;
+    }
+    if (state.truncated) showToast('Route limit reached (' + MAX_ROUTES + '); further links were not recorded.', 'info');
+    if (!baseUrl) {
+      showToast('No base URL given \u2014 relative links (like "/about") could not be resolved and were skipped', 'info');
+    }
+    renderProgress('1', String(state.results.length), '0', 'Checking\u2026', 0);
+
+    checkAllPending(function(done, total, currentUrl){
+      var c = statusCounts();
+      renderProgress('1', String(state.results.length), String(c['washed-out']), currentUrl, total ? done / total : 1);
+      scheduleRender();
+    }).then(function(){
+      finishUi('#checkPasteBtn', 'Check these links', 'Checking\u2026', 'Check complete \u2014 ' + state.results.length + ' routes charted');
+    }).catch(function(err){
+      markUnchecked(); endRun(); hideProgress(); render();
+      setRunning(false, '#checkPasteBtn', 'Check these links', 'Checking\u2026');
+      showToast('Check stopped unexpectedly: ' + ((err && err.message) || 'unknown error'), 'danger');
+    });
+  }
+
+  // ---------- event wiring ----------
+  function switchMode(mode, focusTab){
+    var isUrl = mode === 'url';
+    $('#tabUrl').setAttribute('aria-selected', String(isUrl));
+    $('#tabPaste').setAttribute('aria-selected', String(!isUrl));
+    $('#tabUrl').tabIndex = isUrl ? 0 : -1;
+    $('#tabPaste').tabIndex = isUrl ? -1 : 0;
+    $('#panelUrl').style.display = isUrl ? '' : 'none';
+    $('#panelPaste').style.display = isUrl ? 'none' : '';
+    if (focusTab) (isUrl ? $('#tabUrl') : $('#tabPaste')).focus();
+  }
+  $('#tabUrl').addEventListener('click', function(){ switchMode('url'); });
+  $('#tabPaste').addEventListener('click', function(){ switchMode('paste'); });
+  // WAI-ARIA tabs: arrow keys / Home / End move between tabs (automatic activation)
+  $('.mode-tabs').addEventListener('keydown', function(e){
+    var k = e.key;
+    if (k !== 'ArrowLeft' && k !== 'ArrowRight' && k !== 'Home' && k !== 'End') return;
+    e.preventDefault();
+    var toUrl = (k === 'Home') ? true : (k === 'End') ? false : ($('#tabUrl').getAttribute('aria-selected') !== 'true');
+    switchMode(toUrl ? 'url' : 'paste', true);
+  });
+
+  $('#stopBtn').addEventListener('click', function(){
+    if (!state.running || run.cancelled) return;
+    run.cancelled = true;
+    if (run.controller) run.controller.abort();
+    showToast('Stopping\u2026', 'info');
+  });
+
+  $('#advToggle').addEventListener('click', function(){
+    var panel = $('#advPanel');
+    var open = panel.classList.toggle('open');
+    $('#advToggle').setAttribute('aria-expanded', String(open));
+  });
+
+  $('#surveyBtn').addEventListener('click', runSurvey);
+  $('#urlInput').addEventListener('keydown', function(e){ if (e.key === 'Enter') runSurvey(); });
+  $('#checkPasteBtn').addEventListener('click', runPasteCheck);
+
+  $('#filterGroup').addEventListener('click', function(e){
+    var btn = e.target.closest('.filter-chip');
+    if (!btn) return;
+    state.filter = btn.dataset.filter;
+    renderFilterChips();
+    renderResultsList();
+  });
+
+  $('#exportCsvBtn').addEventListener('click', exportCsv);
+  $('#copyReportBtn').addEventListener('click', copyReport);
+
+  render();
+})();
+</script>
+</body>
+</html>
