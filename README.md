@@ -65,6 +65,13 @@ Descarcă `index.html` și deschide-l în browser. Pagina pornește fără inter
 
 CC0 1.0 Universal (domeniu public) — vezi fișierul `LICENSE`. Declarată în antetul fișierului `index.html` și în subsolul paginii.
 
+## Istoric / Changelog
+
+Ultima actualizare: 11 octombrie 2026 (runda 5; aplicația nu are număr de versiune).
+- Linkurile doar-fragment (`#top`, `pagina#sectiune` către aceeași pagină) nu mai sunt numărate ca rute; variantele cu fragment diferit ale aceluiași URL se unesc într-o singură rută.
+- Linkurile de pe aceeași origine ca site-ul verificat, dar ale căror răspunsuri nu pot fi citite din pagina curentă (modul Paste sau `file://`, fără CORS), apar acum ca „Uncertain — same site, status unreadable from this page (CORS/file://)”, nu ca „cross-origin”. Limita rămâne: un 404 nu poate fi detectat fără CORS sau fără servirea Surveyor de pe aceeași origine.
+- Hash-ul CSP al scriptului a fost recalculat. axe-core: 0 violări la 1280 și 360 px.
+
 ## Autor
 
 Alexio — Alexandru-Ionuț Chiuță, contact: alexio@trom.tf

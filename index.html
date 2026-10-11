@@ -15,7 +15,7 @@
 <meta property="og:title" content="SURVEYOR — a link surveyor for your website">
 <meta property="og:description" content="Single-file link checker. No telemetry; requests go from your browser to the sites you check.">
 <meta property="og:type" content="website">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-2nIdmaOXSMQMywDKJuMLdfpqgi/Fax63Mnnw5gZSgQ8='; style-src 'unsafe-inline'; img-src data:; connect-src https: http:; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; worker-src 'none'; manifest-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-VZuqE/c/wpASpL7u+yE1QkED74dEE/KpHBxZ+K8QY0o='; style-src 'unsafe-inline'; img-src data:; connect-src https: http:; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; worker-src 'none'; manifest-src 'none'">
 <meta name="theme-color" content="#0f1620">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -430,7 +430,8 @@
     var r;
     try { r = new URL(resolvedUrl); } catch(e) { return 'unparseable'; }
     if (r.protocol !== 'http:' && r.protocol !== 'https:') return 'non-http';
-    if (pageUrl && trimmed.charAt(0) === '#') {
+    if (trimmed.charAt(0) === '#') return 'same-page-anchor';   // fragment-only link: never a separate route (also without a base URL)
+    if (pageUrl && r.hash) {
       try {
         var p = new URL(pageUrl);
         if (r.origin === p.origin && r.pathname === p.pathname && r.search === p.search) return 'same-page-anchor';
@@ -492,7 +493,7 @@
   }
 
   // ---------- result bookkeeping ----------
-  function resultKey(type, url){ return type + '|' + url; }
+  function resultKey(type, url){ return type + '|' + stripFragment(url); }   // #fragment variants of one URL are one route
 
   function recordResult(type, url, referencingPage){
     var key = resultKey(type, url);
@@ -577,7 +578,11 @@
       .catch(function(err){
         if (run.cancelled) return STOPPED;
         if (err && err.timedOut) return { status: 'washed-out', code: null, reason: 'timed out' };
-        return checkExternal(url);
+        return checkExternal(url).then(function(o){
+          // Same site as the survey target, but this page cannot read its status (file:// or no CORS): say so plainly.
+          if (o.status === 'uncertain') o.reason = 'same site, status unreadable from this page (CORS/file://)';
+          return o;
+        });
       });
   }
 
@@ -695,6 +700,7 @@
           var found = extractLinks(doc, page.base, includeImages);
           found.forEach(function(f){
             var skip = classifySkip(f.rawHref, f.resolvedUrl, item.url);
+            if (skip === 'same-page-anchor') return;   // in-page fragment: not a route
             if (skip) { recordSkipped(f.type, f.resolvedUrl || f.rawHref, item.url, skip); return; }
             recordResult(f.type, f.resolvedUrl, item.url);
             if (onProgress) onProgress(pagesVisited, state.results.length, item.url);
@@ -724,7 +730,8 @@
     var pageLabel = baseUrl || '(pasted page)';
     found.forEach(function(f){
       var skip = classifySkip(f.rawHref, f.resolvedUrl, baseUrl);
-      if (skip) { recordSkipped(f.type, f.resolvedUrl || f.rawHref, pageLabel, skip); return; }
+      if (skip === 'same-page-anchor') return;   // in-page fragment: not a route
+            if (skip) { recordSkipped(f.type, f.resolvedUrl || f.rawHref, pageLabel, skip); return; }
       recordResult(f.type, f.resolvedUrl, pageLabel);
     });
     state.pagesVisited = 1;
