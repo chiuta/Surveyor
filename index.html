@@ -15,7 +15,7 @@
 <meta property="og:title" content="SURVEYOR — a link surveyor for your website">
 <meta property="og:description" content="Single-file link checker. No telemetry; requests go from your browser to the sites you check.">
 <meta property="og:type" content="website">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Q6RYzXpOvSXLxgY9P7SYYBcc64Qv35BG1MdUeitaTz0='; style-src 'unsafe-inline'; img-src data:; connect-src https: http:; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; worker-src 'none'; manifest-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-iyMYuF2WirIlnqdQEwoBp51yhOtwg84m4/dYsrqtsk4='; style-src 'unsafe-inline'; img-src data:; connect-src https: http:; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; worker-src 'none'; manifest-src 'none'">
 <meta name="theme-color" content="#0f1620" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#f5f1e8" media="(prefers-color-scheme: light)">
 <meta name="mobile-web-app-capable" content="yes">
@@ -336,6 +336,7 @@
     </div>
 
     <div class="summary-strip" id="summaryStrip"></div>
+    <p class="cors-note" id="diagNote" role="note" hidden></p>
 
     <div class="results-controls" id="resultsControls">
       <div class="filter-group" id="filterGroup" role="group" aria-label="Filter results"></div>
@@ -629,14 +630,14 @@
         return res;
       })
       .then(function(res){
-        return { status: res.ok ? 'passable' : 'washed-out', code: res.status, reason: res.ok ? null : ('HTTP ' + res.status) };
+        return { status: res.ok ? 'passable' : 'washed-out', code: res.status, reason: res.ok ? (res.redirected && res.url ? 'redirects to ' + res.url : null) : ('HTTP ' + res.status + (res.redirected && res.url ? ', after redirect to ' + res.url : '')) };
       })
       .catch(function(err){
         if (run.cancelled) return STOPPED;
         if (err && err.timedOut) return { status: 'washed-out', code: null, reason: 'timed out' };
         return checkExternal(url).then(function(o){
           // Same site as the survey target, but this page cannot read its status (file:// or no CORS): say so plainly.
-          if (o.status === 'uncertain') o.reason = 'same site, status unreadable from this page (CORS/file://)';
+          if (o.status === 'uncertain') o.reason = location.protocol === 'file:' ? 'status unreadable: Surveyor is opened from file:// (see note above)' : 'same site, status unreadable from this page (CORS)';
           return o;
         });
       });
@@ -702,7 +703,9 @@
     var visited = {};
     var queue = [{ url: startUrl, depth: 0 }];
     var queuedSet = {}; queuedSet[startUrl] = true;
-    var pagesVisited = 0;
+    var pagesVisited = 0;   // pages actually read and parsed (unique final URL)
+    var attempts = 0;       // fetches started: this is what maxPages caps
+    var readFinal = {};
     var startFailed = null;
     var site = startUrl;   // origin reference for "same site"; updated if the start URL redirects elsewhere
     var redirectedTo = null;
@@ -716,13 +719,12 @@
     }
 
     function step(){
-      if (run.cancelled || !queue.length || pagesVisited >= maxPages) return Promise.resolve();
+      if (run.cancelled || !queue.length || attempts >= maxPages) return Promise.resolve();
       var item = queue.shift();
       if (visited[item.url]) return step();
       visited[item.url] = true;
-      pagesVisited++;
-      state.pagesVisited = pagesVisited;
-      if (onProgress) onProgress(pagesVisited, state.results.length, item.url);
+      attempts++;
+      if (onProgress) onProgress(pagesVisited, state.results.length, item.url, attempts);
 
       return fetchT(item.url, { method: 'GET', redirect: 'follow', cache: 'no-store' }, PAGE_TIMEOUT_MS, true)
         .then(function(r){
@@ -734,7 +736,7 @@
           var ct = res.headers && res.headers.get ? (res.headers.get('content-type') || '') : '';
           if (ct && ct.indexOf('html') === -1) { markPage(item.url, 'passable', res.status, null); return null; }
           if (r.tooBig) { markPage(item.url, 'passable', res.status, null); return null; }
-          markPage(item.url, 'passable', res.status, null);   // fetched fine: no need to HEAD it again later
+          markPage(item.url, 'passable', res.status, res.redirected && res.url ? 'redirects to ' + res.url : null);   // fetched fine: no need to HEAD it again later
           if (item.url === startUrl && res.url && !sameOrigin(res.url, startUrl)) {
             site = res.url; redirectedTo = res.url; state.startOrigin = res.url;
           }
@@ -754,6 +756,9 @@
           } catch(e) { return step(); }
 
           var pageKey = stripFragment(page.base);
+          if (readFinal[pageKey]) return step();   // alias or redirect to a page already surveyed: not a new page
+          readFinal[pageKey] = true;
+          pagesVisited++; state.pagesVisited = pagesVisited;
           var ids = collectIds(doc);
           state.pageIds[pageKey] = ids; state.pageIds[item.url] = ids;
           var found = extractLinks(doc, page.base, includeImages);
@@ -886,7 +891,7 @@
     $('#emptyState').style.display = 'none';
     listEl.className = 'results-list active';
     listEl.innerHTML = rows.map(function(r){
-      var codeLabel = r.code ? ('HTTP ' + r.code) : (r.reason || (r.status === 'pending' ? 'checking\u2026' : ''));
+      var codeLabel = r.code ? ('HTTP ' + r.code + (r.reason && r.reason.indexOf('HTTP') !== 0 ? ' \u00b7 ' + r.reason : '')) : (r.reason || (r.status === 'pending' ? 'checking\u2026' : ''));
       var typeLabel = r.type === 'image' ? 'image' : (r.type === 'anchor' ? 'anchor' : 'link');
       var refsHtml = '';
       if (r.referencedBy.length) {
@@ -908,7 +913,19 @@
       (state.truncated ? '<p class="limit-note">Route limit reached (' + MAX_ROUTES + '): further links were not recorded.</p>' : '');
   }
 
+  function renderDiag(){
+    var el = $('#diagNote'); if (!el) return;
+    var unread = state.results.filter(function(r){ return r.status === 'uncertain' && /unreadable/.test(r.reason || ''); }).length;
+    var fromFile = location.protocol === 'file:';
+    if (!state.results.length || (!unread && !fromFile)) { el.hidden = true; return; }
+    el.hidden = false;
+    el.innerHTML = fromFile
+      ? '<strong>Opened from a file (file://).</strong> The browser gives this page no origin, so it cannot read the status of any link: ' + (unread ? unread + ' same-site link' + (unread === 1 ? ' is' : 's are') + ' shown as Uncertain, not as broken. ' : 'same-site links will show as Uncertain, not as broken. ') + 'For real statuses, serve this file from the site you are checking (or over http://localhost) and use \u201cSurvey a live URL\u201d.'
+      : '<strong>' + unread + ' same-site link' + (unread === 1 ? ' is' : 's are') + ' Uncertain:</strong> the browser blocked reading their status (CORS), so they are not necessarily broken. Serve Surveyor from the site you are checking to get real statuses.';
+  }
+
   function render(){
+    renderDiag();
     renderSummary();
     renderFilterChips();
     renderResultsList();
@@ -946,7 +963,7 @@
     if (!state.results.length) { showToast('Nothing to export yet', 'info'); return; }
     var rows = [['URL', 'Type', 'Status', 'Detail', 'Referenced by']];
     state.results.forEach(function(r){
-      var detail = r.code ? ('HTTP ' + r.code) : (r.reason || '');
+      var detail = r.code ? ('HTTP ' + r.code + (r.reason && r.reason.indexOf('HTTP') !== 0 ? ' \u00b7 ' + r.reason : '')) : (r.reason || '');
       rows.push([r.url, r.type, r.status, detail, r.referencedBy.join(' | ')]);
     });
     var csv = '\ufeff' + rows.map(function(row){ return row.map(csvEscape).join(','); }).join('\r\n');
@@ -975,7 +992,7 @@
     if (broken.length) {
       lines.push('WASHED OUT:');
       broken.forEach(function(r){
-        var detail = r.code ? ('HTTP ' + r.code) : (r.reason || '');
+        var detail = r.code ? ('HTTP ' + r.code + (r.reason && r.reason.indexOf('HTTP') !== 0 ? ' \u00b7 ' + r.reason : '')) : (r.reason || '');
         lines.push('- [' + r.type + '] ' + r.url + ' (' + detail + ')');
         r.referencedBy.slice(0, 10).forEach(function(p){ lines.push('    on: ' + p); });
         if (r.referencedBy.length > 10) lines.push('    \u2026 and ' + (r.referencedBy.length - 10) + ' more');
@@ -1068,8 +1085,8 @@
       includeImages: $('#checkImagesInput').checked
     };
 
-    crawlSite(normalized, opts, function(pagesVisited, linksFound, currentUrl){
-      renderProgress(String(pagesVisited), String(linksFound), '0', currentUrl, opts.maxPages ? pagesVisited / opts.maxPages : 0);
+    crawlSite(normalized, opts, function(pagesVisited, linksFound, currentUrl, attempts){
+      renderProgress(String(pagesVisited), String(linksFound), '0', currentUrl, opts.maxPages ? (attempts || pagesVisited) / opts.maxPages : 0);
     }).then(function(crawlResult){
       if (crawlResult.startFailed) {
         showToast('The starting page itself did not load: ' + crawlResult.startFailed, 'danger');

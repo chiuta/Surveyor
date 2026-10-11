@@ -69,7 +69,13 @@ CC0 1.0 Universal (domeniu public) — vezi fișierul `LICENSE`. Declarată în 
 
 ## Istoric / Changelog
 
-Ultima actualizare: 11 octombrie 2026 (runda 6; aplicația nu are număr de versiune).
+Ultima actualizare: 11 octombrie 2026 (runda 7; aplicația nu are număr de versiune).
+
+Runda 7:
+- **Corectat contorul „Pages surveyed”:** număra fiecare cerere de pagină (inclusiv 404, redirecționări și alias-uri precum `/b` → `/b/`); acum numără doar paginile citite efectiv, o singură dată după URL-ul final (pe un site de test cu 3 pagini, 1 link rupt și 2 redirecționări, afișa 6; acum 3). Limita „max pages” rămâne pe numărul de cereri.
+- **Notă explicativă când rezultatele sunt „unreadable”:** dacă Surveyor e deschis din `file://` (sau linkuri de pe aceeași origine nu pot fi citite din cauza CORS), sub sumar apare o notă care spune că acele linkuri sunt „Uncertain”, nu rupte, și cum se obțin statusuri reale (servire de pe site-ul verificat / `http://localhost`).
+- **Redirecționări vizibile:** linkurile care răspund după o redirecționare arată „HTTP 200 · redirects to …” (și în CSV / Copy report).
+- Hash-ul CSP al scriptului a fost recalculat. axe-core: 0 violări la 1280 și 360 px.
 - **Ancore în pagină verificate:** linkurile `#sectiune` sunt comparate cu `id`/`name` din pagina citită (modul Paste și live); o ancoră lipsă apare ca „Washed out”, tip „anchor”. `#` și `#top` sunt mereu valide; în modul live se verifică și `alta-pagina#parte` dacă pagina respectivă a fost citită. Ancorele generate de JavaScript nu sunt văzute. Linkurile `#…` fără URL de bază nu mai apar ca „unparseable”.
 - Temă luminoasă automată (`prefers-color-scheme: light`; implicit rămâne cea întunecată) și stil de tipărire (se tipărește doar lista de rezultate).
 - Hash-ul CSP al scriptului a fost recalculat. axe-core: 0 violări la 1280 și 360 px, în ambele teme.
