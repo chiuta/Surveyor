@@ -24,6 +24,8 @@ Verificate în cod și într-un browser headless (Chromium/Playwright) pe un sit
 - Limite: cel mult 4 verificări în paralel, cu pauză de 250 ms între loturi; maximum 3000 de adrese distincte per rulare; se afișează primele 500 de rânduri (CSV conține tot).
 - **Copy report** (text) și **Export CSV**. În CSV, celulele care încep cu `=`, `+`, `-`, `@`, TAB sau CR sunt prefixate cu apostrof (previne execuția de formule în Excel/Calc); fișierul are BOM UTF-8.
 - Linkurile `javascript:`, `data:`, `mailto:` etc. apar ca text, nu ca linkuri pe care se poate da click.
+- Ancore în pagină (`#sectiune`) verificate local față de `id`/`name` din HTML-ul citit sau lipit — singurul tip de „link rupt” detectabil fiabil și în modul Paste / `file://`.
+- Temă luminoasă la cerere (preferința sistemului) și stil de tipărire.
 - Accesibilitate: tab-uri cu săgeți/Home/End, `aria-selected`, bară de progres cu `role="progressbar"`, focus vizibil.
 
 ## Manual de utilizare
@@ -67,8 +69,13 @@ CC0 1.0 Universal (domeniu public) — vezi fișierul `LICENSE`. Declarată în 
 
 ## Istoric / Changelog
 
-Ultima actualizare: 11 octombrie 2026 (runda 5; aplicația nu are număr de versiune).
-- Linkurile doar-fragment (`#top`, `pagina#sectiune` către aceeași pagină) nu mai sunt numărate ca rute; variantele cu fragment diferit ale aceluiași URL se unesc într-o singură rută.
+Ultima actualizare: 11 octombrie 2026 (runda 6; aplicația nu are număr de versiune).
+- **Ancore în pagină verificate:** linkurile `#sectiune` sunt comparate cu `id`/`name` din pagina citită (modul Paste și live); o ancoră lipsă apare ca „Washed out”, tip „anchor”. `#` și `#top` sunt mereu valide; în modul live se verifică și `alta-pagina#parte` dacă pagina respectivă a fost citită. Ancorele generate de JavaScript nu sunt văzute. Linkurile `#…` fără URL de bază nu mai apar ca „unparseable”.
+- Temă luminoasă automată (`prefers-color-scheme: light`; implicit rămâne cea întunecată) și stil de tipărire (se tipărește doar lista de rezultate).
+- Hash-ul CSP al scriptului a fost recalculat. axe-core: 0 violări la 1280 și 360 px, în ambele teme.
+
+Runda 5:
+- Linkurile doar-fragment (`#top`, `pagina#sectiune` către aceeași pagină) nu mai sunt numărate ca rute (iar în runda 6 sunt verificate ca ancore); variantele cu fragment diferit ale aceluiași URL se unesc într-o singură rută.
 - Linkurile de pe aceeași origine ca site-ul verificat, dar ale căror răspunsuri nu pot fi citite din pagina curentă (modul Paste sau `file://`, fără CORS), apar acum ca „Uncertain — same site, status unreadable from this page (CORS/file://)”, nu ca „cross-origin”. Limita rămâne: un 404 nu poate fi detectat fără CORS sau fără servirea Surveyor de pe aceeași origine.
 - Hash-ul CSP al scriptului a fost recalculat. axe-core: 0 violări la 1280 și 360 px.
 

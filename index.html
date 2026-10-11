@@ -9,14 +9,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="dark">
+<meta name="color-scheme" content="dark light">
 <meta name="description" content="Link checker for websites in a single HTML file. Crawls same-origin pages, checks links and images, exports a report. Sends requests from your browser to every site it checks.">
 <meta name="referrer" content="no-referrer">
 <meta property="og:title" content="SURVEYOR — a link surveyor for your website">
 <meta property="og:description" content="Single-file link checker. No telemetry; requests go from your browser to the sites you check.">
 <meta property="og:type" content="website">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-VZuqE/c/wpASpL7u+yE1QkED74dEE/KpHBxZ+K8QY0o='; style-src 'unsafe-inline'; img-src data:; connect-src https: http:; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; worker-src 'none'; manifest-src 'none'">
-<meta name="theme-color" content="#0f1620">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Q6RYzXpOvSXLxgY9P7SYYBcc64Qv35BG1MdUeitaTz0='; style-src 'unsafe-inline'; img-src data:; connect-src https: http:; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; worker-src 'none'; manifest-src 'none'">
+<meta name="theme-color" content="#0f1620" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f1e8" media="(prefers-color-scheme: light)">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -242,6 +243,27 @@
   @media (prefers-reduced-motion: reduce){
     *{transition:none!important;animation:none!important;}
   }
+  /* Runda 6: variantă luminoasă pentru cei care o preferă din sistem; implicit rămâne tema întunecată */
+  @media (prefers-color-scheme: light){
+    :root{
+      --ink:#f5f1e8;--panel:#fffdf8;--panel-2:#efe9dc;--line:#b9ae98;--line-soft:#e1d9c8;
+      --parchment:#1c2630;--parchment-dim:#46515c;--parchment-faint:#52606c;
+      --verdigris:#0b6b58;--verdigris-bg:rgba(11,107,88,.1);
+      --rust:#a8441a;--rust-bg:rgba(168,68,26,.1);
+      --gold:#7d5a0c;--gold-bg:rgba(125,90,12,.1);
+      --slate:#2b5896;--slate-bg:rgba(43,88,150,.1);
+    }
+    body{background-image:none;}
+    .btn-primary{color:#fffdf8;}
+  }
+  @media print{
+    :root{--ink:#fff;--panel:#fff;--panel-2:#fff;--line:#999;--line-soft:#ccc;--parchment:#000;--parchment-dim:#222;--parchment-faint:#333;--verdigris:#0b6b58;--rust:#a8441a;--gold:#5a4208;--slate:#2b5896;--verdigris-bg:transparent;--rust-bg:transparent;--gold-bg:transparent;--slate-bg:transparent}
+    body{background:#fff!important;color:#000}
+    .survey-panel,.progress-panel,.results-controls,.toast-container,.about,.cors-note,.ethics-note,.empty-state,footer.foot{display:none!important}
+    .app{max-width:none;padding:0}
+    .result-row{break-inside:avoid;border:1px solid #999}
+    .result-refs details>*{display:block}
+  }
 </style>
 </head>
 <body>
@@ -337,8 +359,9 @@
     <details class="about">
       <summary>About Surveyor</summary>
       <p>Surveyor reads one page, follows every <code>&lt;a href&gt;</code> it finds (and, optionally, every <code>&lt;img src&gt;</code>), and checks whether each one resolves. Pages on the <strong>same origin</strong> as the start page are walked in turn — up to the page and depth limits you set. It reads static HTML only: links added by JavaScript, <code>srcset</code>, <code>&lt;link&gt;</code>, scripts, stylesheets, iframes and CSS backgrounds are not seen.</p>
-      <p>Every result lands in one of four states. <strong>Passable</strong> — a real 2xx response, read from the same origin (or a site that allows cross-origin reads). <strong>Washed out</strong> — an error status, a timeout, or a network failure (the browser could not reach it at all). <strong>Uncertain</strong> — a cross-origin link that answered in some form, but the browser's CORS rules hide the status code: <strong>an external link that returns 404 is still shown as Uncertain</strong>, so this tool cannot find dead pages on other sites, only unreachable hosts. <strong>Skipped</strong> — <code>mailto:</code>, <code>tel:</code>, <code>javascript:</code>, same-page anchors and the like, plus anything beyond the route limit or left unchecked when you pressed Stop.</p>
+      <p>Every result lands in one of four states. <strong>Passable</strong> — a real 2xx response, read from the same origin (or a site that allows cross-origin reads). <strong>Washed out</strong> — an error status, a timeout, or a network failure (the browser could not reach it at all). <strong>Uncertain</strong> — a cross-origin link that answered in some form, but the browser's CORS rules hide the status code: <strong>an external link that returns 404 is still shown as Uncertain</strong>, so this tool cannot find dead pages on other sites, only unreachable hosts. <strong>Skipped</strong> — <code>mailto:</code>, <code>tel:</code>, <code>javascript:</code>, empty links and the like, plus anything beyond the route limit or left unchecked when you pressed Stop.</p>
       <p>Washed-out results for external links can be false alarms: a blocking browser extension, an ad blocker, a VPN, mixed content (checking an <code>http://</code> site from an <code>https://</code> page) or a firewall also look like "unreachable". Re-check before editing a page.</p>
+      <p><strong>In-page anchors.</strong> Links such as <code>#pricing</code> are checked against the page they sit on: if that page has no element with <code>id="pricing"</code> (or <code>&lt;a name&gt;</code>), the anchor is listed as <strong>Washed out</strong> with type "anchor". <code>#</code> and <code>#top</code> are always valid. In live mode, links like <code>other-page#part</code> are also checked when <em>other-page</em> was read during the survey. This check reads only the HTML that was fetched or pasted, so anchors created by JavaScript are not seen.</p>
       <p>Each result also lists which page(s) reference it, since that's what you actually need to go fix.</p>
       <p><strong>Privacy.</strong> Surveyor has no server, no analytics, no cookies and saves nothing between visits. But it is not "local only": to check a link, your browser sends a HEAD request (sometimes GET) to that link's site, including external sites, which can see your IP address and normal browser headers. Cookies are not sent to third parties and the Referer is suppressed; requests to the surveyed site may carry an <code>Origin</code> header naming the page that hosts Surveyor. Reports (copy/CSV) are produced in your browser and go nowhere unless you save or paste them.</p>
       <p><strong>Etiquette.</strong> Only survey sites you own or are allowed to test. Surveyor checks at most four links at once with short pauses and caps each run (pages, depth and total routes), but it does not read <code>robots.txt</code> and it does not rate-limit per host beyond that. Stop the run if a server struggles.</p>
@@ -383,6 +406,8 @@
     startOrigin: null,
     results: [],       // { url, type, status, code, reason, referencedBy: [pageUrl,...] }
     resultIndexByKey: {}, // (type+'|'+url) -> index into results
+    pageIds: {},       // page URL (no fragment) -> { id/name: 1 } of the pages that were actually read
+    anchorRefs: [],    // [{ from, target, frag }] fragment links to verify against pageIds
     pagesVisited: 0,
     truncated: false,
     filter: 'all'
@@ -493,7 +518,7 @@
   }
 
   // ---------- result bookkeeping ----------
-  function resultKey(type, url){ return type + '|' + stripFragment(url); }   // #fragment variants of one URL are one route
+  function resultKey(type, url){ return type === 'anchor' ? 'anchor|' + url : type + '|' + stripFragment(url); }   // #fragment variants of one URL are one route
 
   function recordResult(type, url, referencingPage){
     var key = resultKey(type, url);
@@ -512,6 +537,37 @@
       entry.referencedBy.push(referencingPage);
     }
     return entry;
+  }
+
+  // ---------- in-page anchors (#section) ----------
+  // A link to #x is broken when the page that was read has no element with id="x" (or <a name="x">).
+  // "#" , "#top" and an empty fragment are always valid (HTML spec: top of the document).
+  function collectIds(doc){
+    var ids = {};
+    $$('[id]', doc).forEach(function(e){ ids[e.getAttribute('id')] = 1; });
+    $$('a[name]', doc).forEach(function(e){ ids[e.getAttribute('name')] = 1; });
+    return ids;
+  }
+  function fragFromRaw(raw){
+    var f = String(raw || '').trim();
+    var i = f.indexOf('#');
+    return i === -1 ? '' : f.slice(i + 1);
+  }
+  function noteAnchor(from, target, frag){
+    if (!frag || frag.toLowerCase() === 'top') return;
+    state.anchorRefs.push({ from: from, target: target, frag: frag });
+  }
+  function verifyAnchors(){
+    state.anchorRefs.forEach(function(a){
+      var ids = state.pageIds[a.target];
+      if (!ids) return;   // that page was not read (not crawled / external): cannot say anything
+      var dec = a.frag;
+      try { dec = decodeURIComponent(a.frag); } catch(e) {}
+      if (ids[a.frag] || ids[dec]) return;
+      var entry = recordResult('anchor', a.target + '#' + a.frag, a.from);
+      if (entry.status === 'pending') { entry.status = 'washed-out'; entry.reason = 'no element with id or name "' + dec + '" on that page'; }
+    });
+    state.anchorRefs = [];
   }
 
   function recordSkipped(type, url, referencingPage, reason){
@@ -697,10 +753,16 @@
             doc = parser.parseFromString(page.html, 'text/html');
           } catch(e) { return step(); }
 
+          var pageKey = stripFragment(page.base);
+          var ids = collectIds(doc);
+          state.pageIds[pageKey] = ids; state.pageIds[item.url] = ids;
           var found = extractLinks(doc, page.base, includeImages);
           found.forEach(function(f){
+            var rawT = String(f.rawHref || '').trim();
+            if (f.type === 'link' && rawT.charAt(0) === '#') { noteAnchor(item.url, pageKey, fragFromRaw(rawT)); return; }
             var skip = classifySkip(f.rawHref, f.resolvedUrl, item.url);
-            if (skip === 'same-page-anchor') return;   // in-page fragment: not a route
+            if (skip === 'same-page-anchor') { if (f.type === 'link') noteAnchor(item.url, pageKey, fragFromRaw(f.resolvedUrl)); return; }   // in-page fragment: not a route
+            if (!skip && f.type === 'link' && f.resolvedUrl) { var fr = fragFromRaw(f.resolvedUrl); if (fr) noteAnchor(item.url, stripFragment(f.resolvedUrl), fr); }
             if (skip) { recordSkipped(f.type, f.resolvedUrl || f.rawHref, item.url, skip); return; }
             recordResult(f.type, f.resolvedUrl, item.url);
             if (onProgress) onProgress(pagesVisited, state.results.length, item.url);
@@ -728,13 +790,18 @@
     var doc = parser.parseFromString(htmlText, 'text/html');
     var found = extractLinks(doc, baseUrl, includeImages);
     var pageLabel = baseUrl || '(pasted page)';
+    var selfKey = baseUrl ? stripFragment(baseUrl) : pageLabel;
+    state.pageIds[selfKey] = collectIds(doc);
     found.forEach(function(f){
+      var rawT = String(f.rawHref || '').trim();
+      if (f.type === 'link' && rawT.charAt(0) === '#') { noteAnchor(pageLabel, selfKey, fragFromRaw(rawT)); return; }
       var skip = classifySkip(f.rawHref, f.resolvedUrl, baseUrl);
-      if (skip === 'same-page-anchor') return;   // in-page fragment: not a route
+      if (skip === 'same-page-anchor') { if (f.type === 'link') noteAnchor(pageLabel, selfKey, fragFromRaw(f.resolvedUrl)); return; }   // in-page fragment: not a route
             if (skip) { recordSkipped(f.type, f.resolvedUrl || f.rawHref, pageLabel, skip); return; }
       recordResult(f.type, f.resolvedUrl, pageLabel);
     });
     state.pagesVisited = 1;
+    verifyAnchors();
   }
   // ---------- signature element: the survey stamp ----------
   var STAMP_DEFS = {
@@ -820,7 +887,7 @@
     listEl.className = 'results-list active';
     listEl.innerHTML = rows.map(function(r){
       var codeLabel = r.code ? ('HTTP ' + r.code) : (r.reason || (r.status === 'pending' ? 'checking\u2026' : ''));
-      var typeLabel = r.type === 'image' ? 'image' : 'link';
+      var typeLabel = r.type === 'image' ? 'image' : (r.type === 'anchor' ? 'anchor' : 'link');
       var refsHtml = '';
       if (r.referencedBy.length) {
         var items = r.referencedBy.slice(0, 30).map(function(p){
@@ -942,6 +1009,8 @@
     state.resultIndexByKey = {};
     state.pagesVisited = 0;
     state.truncated = false;
+    state.pageIds = {};
+    state.anchorRefs = [];
     state.filter = 'all';
   }
 
@@ -1008,6 +1077,7 @@
       if (crawlResult.redirectedTo) {
         showToast('The start URL redirected to ' + crawlResult.redirectedTo + ' \u2014 surveying that site.', 'info');
       }
+      verifyAnchors();
       if (state.truncated) showToast('Route limit reached (' + MAX_ROUTES + '); further links were not recorded.', 'info');
       render();
       renderProgress(String(state.pagesVisited), String(state.results.length), '0', 'Checking charted routes\u2026', 0);
