@@ -1,5 +1,7 @@
 # Surveyor
 
+**Versiune:** 1.0.0 · **Ultima actualizare:** 12 octombrie 2026
+
 Verificator de linkuri pentru site-uri, într-un singur fișier HTML. Interfața este în **engleză**; documentația (acest fișier) este în română.
 
 **Live:** https://chiuta.github.io/Surveyor/
@@ -69,7 +71,7 @@ CC0 1.0 Universal (domeniu public) — vezi fișierul `LICENSE`. Declarată în 
 
 ## Istoric / Changelog
 
-Ultima actualizare: 11 octombrie 2026 (runda 7; aplicația nu are număr de versiune).
+- 1.0.0 — 2026-10-12: versiunea și data ultimei actualizări sunt afișate în aplicație (prima versiune numerotată).
 
 Runda 7:
 - **Corectat contorul „Pages surveyed”:** număra fiecare cerere de pagină (inclusiv 404, redirecționări și alias-uri precum `/b` → `/b/`); acum numără doar paginile citite efectiv, o singură dată după URL-ul final (pe un site de test cu 3 pagini, 1 link rupt și 2 redirecționări, afișa 6; acum 3). Limita „max pages” rămâne pe numărul de cereri.
