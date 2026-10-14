@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "slug": "surveyor",
+  "name": "SURVEYOR — a link surveyor for your website",
+  "version": "1.1.0",
+  "updated": "2026-10-14",
+  "description": "Link checker for websites in a single HTML file. Crawls same-origin pages, checks links and images, exports a report. Sends requests from your browser to every site it checks.",
+  "egress": [
+    {
+      "host": "http:(orice gazdă)",
+      "via": [
+        "csp:connect-src"
+      ]
+    },
+    {
+      "host": "https:(orice gazdă)",
+      "via": [
+        "csp:connect-src"
+      ]
+    }
+  ],
+  "permissions": [
+    "clipboard",
+    "serviceWorker"
+  ],
+  "storageKeys": [],
+  "sizeBytes": 155700,
+  "sha256": "1feedd2e84a2ddcf70a1ea6478c3b6c2ea7ce0ae9d17b8306161786f298b6595",
+  "csp": {
+    "present": true,
+    "directives": {
+      "default-src": "'none'",
+      "script-src": "sha256×3",
+      "style-src": "'unsafe-inline'",
+      "img-src": "'self' data:",
+      "connect-src": "https: http:",
+      "base-uri": "'none'",
+      "form-action": "'none'",
+      "frame-src": "'none'",
+      "object-src": "'none'",
+      "worker-src": "'self'",
+      "manifest-src": "'self'"
+    },
+    "scriptInline": "hash",
+    "connect": "https: http:"
+  },
+  "features": {
+    "export": true,
+    "import": true,
+    "i18n": [],
+    "pwa": {
+      "manifest": true,
+      "serviceWorker": true
+    },
+    "modules": [
+      "core",
+      "label",
+      "bundle"
+    ]
+  },
+  "kit": {
+    "version": "1.0.0",
+    "modules": [
+      "core",
+      "label",
+      "bundle"
+    ]
+  },
+  "selfSerializing": false
+}

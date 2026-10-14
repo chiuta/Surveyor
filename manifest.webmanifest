@@ -1,0 +1,37 @@
+{
+  "name": "SURVEYOR",
+  "short_name": "SURVEYOR",
+  "description": "Link checker for websites in a single HTML file. Crawls same-origin pages, checks links and images, exports a report. Sends requests from your browser to every site it checks.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "lang": "en",
+  "background_color": "#0f1620",
+  "theme_color": "#0f1620",
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "x_fff_pwa": 1
+}

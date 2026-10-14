@@ -1,6 +1,6 @@
 # Surveyor
 
-**Versiune:** 1.0.0 · **Ultima actualizare:** 12 octombrie 2026
+**Versiune:** 1.1.0 · **Ultima actualizare:** 14 octombrie 2026
 
 Verificator de linkuri pentru site-uri, într-un singur fișier HTML. Interfața este în **engleză**; documentația (acest fișier) este în română.
 
@@ -70,6 +70,8 @@ Descarcă `index.html` și deschide-l în browser. Pagina pornește fără inter
 CC0 1.0 Universal (domeniu public) — vezi fișierul `LICENSE`. Declarată în antetul fișierului `index.html` și în subsolul paginii.
 
 ## Istoric / Changelog
+
+- 1.1.0 — 2026-10-14: Copie de rezervă și etichetare date (fff-kit).
 
 - 1.0.0 — 2026-10-12: versiunea și data ultimei actualizări sunt afișate în aplicație (prima versiune numerotată).
 
