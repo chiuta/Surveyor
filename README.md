@@ -67,7 +67,7 @@ Descarcă `index.html` și deschide-l în browser. Pagina pornește fără inter
 
 ## Licență
 
-CC0 1.0 Universal (domeniu public) — vezi fișierul `LICENSE`. Declarată în antetul fișierului `index.html` și în subsolul paginii.
+MIT — vezi fișierul `LICENSE`. Declarată în antetul fișierului `index.html` și în subsolul paginii.
 
 ## Istoric / Changelog
 
@@ -95,4 +95,4 @@ Alexio — Alexandru-Ionuț Chiuță, contact: alexio@trom.tf
 
 ## English summary
 
-Surveyor is a single-file link checker (English UI): it reads a page, follows same-origin links, and checks links and images, with Stop, a politeness cap (4 parallel checks, 250 ms pauses, 3000 URLs) and CSV/text reports (CSV formula injection neutralised). It stores nothing and has no analytics, but it is not local-only: your browser sends HEAD/GET requests to every site it checks, including external ones (IP visible, no Referer). Because of CORS, external links can only be "uncertain" or "unreachable"; a 404 on another site is not detected. It does not read robots.txt: survey only sites you own or have permission to test. CC0 1.0.
+Surveyor is a single-file link checker (English UI): it reads a page, follows same-origin links, and checks links and images, with Stop, a politeness cap (4 parallel checks, 250 ms pauses, 3000 URLs) and CSV/text reports (CSV formula injection neutralised). It stores nothing and has no analytics, but it is not local-only: your browser sends HEAD/GET requests to every site it checks, including external ones (IP visible, no Referer). Because of CORS, external links can only be "uncertain" or "unreachable"; a 404 on another site is not detected. It does not read robots.txt: survey only sites you own or have permission to test. MIT licence.
