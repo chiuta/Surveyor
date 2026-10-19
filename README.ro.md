@@ -2,9 +2,11 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 1.1.0 · **Ultima actualizare:** 2026-10-14
+**Versiune:** 1.2.0 · **Ultima actualizare:** 2026-10-19
 
-Verificator de linkuri pentru site-uri, într-un singur fișier HTML. Interfața este în **engleză**; documentația (acest fișier) este în română.
+Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
+
+Verificator de linkuri pentru site-uri, într-un singur fișier HTML. Interfața are **8 limbi** (RO, EN, FR, IT, ES, PT, DE, HU); documentația (acest fișier) este în română.
 
 **Live:** https://chiuta.github.io/Surveyor/
 

@@ -2,9 +2,11 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · **Deutsch** · [Magyar](README.hu.md)
 
-**Version:** 1.1.0 · **Zuletzt aktualisiert:** 2026-10-14
+**Version:** 1.2.0 · **Zuletzt aktualisiert:** 2026-10-19
 
-Link-Prüfer für Websites, in einer einzigen HTML-Datei. Die Oberfläche ist auf **Englisch**; die Dokumentation (diese Datei) ist auf Deutsch.
+Oberflächensprachen: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
+
+Link-Prüfer für Websites, in einer einzigen HTML-Datei. Die Oberfläche hat **8 Sprachen** (RO, EN, FR, IT, ES, PT, DE, HU); die Dokumentation (diese Datei) ist auf Deutsch.
 
 **Online:** https://chiuta.github.io/Surveyor/
 

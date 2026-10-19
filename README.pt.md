@@ -2,9 +2,11 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · **Português** · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versão:** 1.1.0 · **Última atualização:** 2026-10-14
+**Versão:** 1.2.0 · **Última atualização:** 2026-10-19
 
-Verificador de ligações para sítios web, num único ficheiro HTML. A interface está em **inglês**; a documentação (este ficheiro) está em português.
+Idiomas da interface: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
+
+Verificador de ligações para sítios web, num único ficheiro HTML. A interface tem **8 idiomas** (RO, EN, FR, IT, ES, PT, DE, HU); a documentação (este ficheiro) está em português.
 
 **Online:** https://chiuta.github.io/Surveyor/
 

@@ -2,9 +2,11 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · **Magyar**
 
-**Verzió:** 1.1.0 · **Utolsó frissítés:** 2026-10-14
+**Verzió:** 1.2.0 · **Utolsó frissítés:** 2026-10-19
 
-Hivatkozásellenőrző weboldalakhoz, egyetlen HTML-fájlban. A felület **angol nyelvű**; a dokumentáció (ez a fájl) magyar nyelvű.
+A felület nyelvei: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
+
+Hivatkozásellenőrző weboldalakhoz, egyetlen HTML-fájlban. A felület **8 nyelvű** (RO, EN, FR, IT, ES, PT, DE, HU); a dokumentáció (ez a fájl) magyar nyelvű.
 
 **Online:** https://chiuta.github.io/Surveyor/
 

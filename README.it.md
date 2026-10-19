@@ -2,9 +2,11 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · **Italiano** · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versione:** 1.1.0 · **Ultimo aggiornamento:** 2026-10-14
+**Versione:** 1.2.0 · **Ultimo aggiornamento:** 2026-10-19
 
-Verificatore di link per siti web, in un unico file HTML. L'interfaccia è in **inglese**; la documentazione (questo file) è in italiano.
+Lingue dell'interfaccia: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
+
+Verificatore di link per siti web, in un unico file HTML. L'interfaccia ha **8 lingue** (RO, EN, FR, IT, ES, PT, DE, HU); la documentazione (questo file) è in italiano.
 
 **Online:** https://chiuta.github.io/Surveyor/
 
