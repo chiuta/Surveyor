@@ -97,6 +97,6 @@ Runda 5:
 
 Alexio — Alexandru-Ionuț Chiuță, contact: alexio@trom.tf
 
-## English summary
+## Rezumat
 
-Surveyor is a single-file link checker (English UI): it reads a page, follows same-origin links, and checks links and images, with Stop, a politeness cap (4 parallel checks, 250 ms pauses, 3000 URLs) and CSV/text reports (CSV formula injection neutralised). It stores nothing and has no analytics, but it is not local-only: your browser sends HEAD/GET requests to every site it checks, including external ones (IP visible, no Referer). Because of CORS, external links can only be "uncertain" or "unreachable"; a 404 on another site is not detected. It does not read robots.txt: survey only sites you own or have permission to test. MIT licence.
+Surveyor este un verificator de linkuri într-un singur fișier (interfață în engleză): citește o pagină, urmează linkurile din aceeași origine și verifică linkurile și imaginile, cu Stop, o limită de politețe (4 verificări în paralel, pauze de 250 ms, 3000 de URL-uri) și rapoarte CSV/text (injecția de formule CSV neutralizată). Nu stochează nimic și nu are analitice, dar nu este doar local: browserul tău trimite cereri HEAD/GET către fiecare site verificat, inclusiv cele externe (IP vizibil, fără Referer). Din cauza CORS, linkurile externe pot fi doar „incerte” sau „inaccesibile”; un 404 pe alt site nu este detectat. Nu citește robots.txt: verifică doar site-uri pe care le deții sau pentru care ai permisiunea de a le testa. Licență MIT.
