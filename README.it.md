@@ -10,7 +10,7 @@ Verificatore di link per siti web, in un unico file HTML. L'interfaccia ha **8 l
 
 **Online:** https://chiuta.github.io/Surveyor/
 
-![Schermata (esecuzione su un sito di prova locale)](screenshot.png)
+![Schermata (esecuzione su un sito di prova locale)](screenshot.it.png)
 
 ## Che cos'è
 

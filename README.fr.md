@@ -10,7 +10,7 @@ Vérificateur de liens pour sites web, dans un seul fichier HTML. L'interface co
 
 **En ligne :** https://chiuta.github.io/Surveyor/
 
-![Capture d'écran (exécution sur un site de test local)](screenshot.png)
+![Capture d'écran (exécution sur un site de test local)](screenshot.fr.png)
 
 ## Qu'est-ce que c'est
 

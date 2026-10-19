@@ -10,7 +10,7 @@ A link checker for websites, in a single HTML file. The interface has **8 langua
 
 **Live:** https://chiuta.github.io/Surveyor/
 
-![Screenshot (running on a local test site)](screenshot.png)
+![Screenshot (running on a local test site)](screenshot.en.png)
 
 ## What it is
 

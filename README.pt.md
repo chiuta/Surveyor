@@ -10,7 +10,7 @@ Verificador de ligações para sítios web, num único ficheiro HTML. A interfac
 
 **Online:** https://chiuta.github.io/Surveyor/
 
-![Captura de ecrã (execução num sítio de teste local)](screenshot.png)
+![Captura de ecrã (execução num sítio de teste local)](screenshot.pt.png)
 
 ## O que é
 

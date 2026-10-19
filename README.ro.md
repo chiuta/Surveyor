@@ -10,7 +10,7 @@ Verificator de linkuri pentru site-uri, într-un singur fișier HTML. Interfața
 
 **Live:** https://chiuta.github.io/Surveyor/
 
-![Captură de ecran (rulare pe un site de test local)](screenshot.png)
+![Captură de ecran (rulare pe un site de test local)](screenshot.ro.png)
 
 ## Ce este
 

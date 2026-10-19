@@ -10,7 +10,7 @@ Link-Prüfer für Websites, in einer einzigen HTML-Datei. Die Oberfläche hat **
 
 **Online:** https://chiuta.github.io/Surveyor/
 
-![Screenshot (Ausführung auf einer lokalen Testseite)](screenshot.png)
+![Screenshot (Ausführung auf einer lokalen Testseite)](screenshot.de.png)
 
 ## Was es ist
 

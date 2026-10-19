@@ -10,7 +10,7 @@ Verificador de enlaces para sitios web, en un único archivo HTML. La interfaz t
 
 **En línea:** https://chiuta.github.io/Surveyor/
 
-![Captura de pantalla (ejecución en un sitio de prueba local)](screenshot.png)
+![Captura de pantalla (ejecución en un sitio de prueba local)](screenshot.es.png)
 
 ## Qué es
 

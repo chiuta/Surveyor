@@ -10,7 +10,7 @@ Hivatkozásellenőrző weboldalakhoz, egyetlen HTML-fájlban. A felület **8 nye
 
 **Online:** https://chiuta.github.io/Surveyor/
 
-![Képernyőkép (futtatás egy helyi tesztoldalon)](screenshot.png)
+![Képernyőkép (futtatás egy helyi tesztoldalon)](screenshot.hu.png)
 
 ## Mi ez
 
