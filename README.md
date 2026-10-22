@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 1.2.1 · **Last updated:** 2026-10-22
+**Version:** 1.2.2 · **Last updated:** 2026-10-22
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -74,6 +74,9 @@ Download `index.html` and open it in the browser. The page starts without intern
 MIT — see the `LICENSE` file. Declared in the header of the `index.html` file and in the page footer.
 
 ## History / Changelog
+
+### 1.2.2 — 2026-10-22
+- Mobile: no text below 12 px and touch targets of at least 24 px (WCAG 2.5.8).
 
 ### 1.2.1 — 2026-10-22
 - Translation fixes: the page title and meta tags now follow the interface language; leftover texts in the wrong language removed.

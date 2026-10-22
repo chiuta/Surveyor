@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 1.2.1 · **Ultima actualizare:** 2026-10-22
+**Versiune:** 1.2.2 · **Ultima actualizare:** 2026-10-22
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -74,6 +74,9 @@ Descarcă `index.html` și deschide-l în browser. Pagina pornește fără inter
 MIT — vezi fișierul `LICENSE`. Declarată în antetul fișierului `index.html` și în subsolul paginii.
 
 ## Istoric / Changelog
+
+### 1.2.2 — 2026-10-22
+- Mobil: niciun text sub 12 px și ținte tactile de cel puțin 24 px (WCAG 2.5.8).
 
 ### 1.2.1 — 2026-10-22
 - Corecturi de traducere: titlul paginii și meta-etichetele urmează limba interfeței; texte rămase în limba greșită eliminate.
