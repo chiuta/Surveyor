@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · **Español** · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versión:** 1.2.0 · **Última actualización:** 2026-10-19
+**Versión:** 1.2.1 · **Última actualización:** 2026-10-22
 
 Idiomas de la interfaz: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -74,6 +74,9 @@ Descarga `index.html` y ábrelo en el navegador. La página arranca sin internet
 MIT — véase el archivo `LICENSE`. Declarada en la cabecera del archivo `index.html` y en el pie de la página.
 
 ## Historial / Changelog
+
+### 1.2.1 — 2026-10-22
+- Correcciones de traducción: el título de la página y las metaetiquetas siguen el idioma de la interfaz; eliminados los textos que quedaban en el idioma equivocado.
 
 - 1.1.0 — 2026-10-14: copia de seguridad y etiquetado de datos (fff-kit).
 

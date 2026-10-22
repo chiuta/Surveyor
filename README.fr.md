@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · **Français** · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version :** 1.2.0 · **Dernière mise à jour :** 2026-10-19
+**Version :** 1.2.1 · **Dernière mise à jour :** 2026-10-22
 
 Langues de l'interface : **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -74,6 +74,9 @@ Téléchargez `index.html` et ouvrez-le dans le navigateur. La page démarre san
 MIT — voir le fichier `LICENSE`. Déclarée dans l'en-tête du fichier `index.html` et dans le pied de page.
 
 ## Historique / Changelog
+
+### 1.2.1 — 2026-10-22
+- Corrections de traduction : le titre de la page et les balises meta suivent la langue de l’interface ; textes restés dans la mauvaise langue supprimés.
 
 - 1.1.0 — 2026-10-14 : sauvegarde et étiquetage des données (fff-kit).
 
