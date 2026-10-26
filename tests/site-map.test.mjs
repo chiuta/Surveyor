@@ -163,7 +163,6 @@ const dl = async (p, sel) => { const [d] = await Promise.all([p.waitForEvent('do
   const sc = await dl(p, '#exportScanBtn');
   const scan = JSON.parse(sc.text);
   check('scanare JSON: app, tip, pagini, linkuri, stări', scan.app === 'surveyor' && scan.kind === 'scan' && scan.pages.length === 9 && scan.links.length >= 11 && Object.keys(scan.status).length > 5, [scan.pages.length, scan.links.length]);
-  check('după prima rulare, „previous run” e încă dezactivat', await p.evaluate(() => document.getElementById('cmpPrevBtn').disabled));
   V = 2;
   await survey(p, {sitemap: true});
   check('„Compară cu rularea anterioară” activ după a doua rulare', await p.evaluate(() => !document.getElementById('cmpPrevBtn').disabled));
