@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 1.2.6 · **Ultima actualizare:** 2026-10-26
+**Versiune:** 2.0.0 · **Ultima actualizare:** 2026-10-26
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -33,6 +33,8 @@ Verificate în cod și într-un browser headless (Chromium/Playwright) pe un sit
 - Ancore în pagină (`#sectiune`) verificate local față de `id`/`name` din HTML-ul citit sau lipit — singurul tip de „link rupt” detectabil fiabil și în modul Paste / `file://`.
 - Temă luminoasă la cerere (preferința sistemului) și stil de tipărire.
 - Accesibilitate: tab-uri cu săgeți/Home/End, `aria-selected`, bară de progres cu `role="progressbar"`, focus vizibil.
+- **Hartă a site-ului (2.0.0):** după o verificare, graful interactiv al linkurilor interne arată adâncimea de clic de la pagina de start; poți compara două scanări (rularea anterioară sau o scanare salvată ca JSON): pagini și linkuri apărute sau dispărute, stări schimbate. Nimic nu se păstrează între vizite, doar dacă salvezi tu fișierul.
+- **Pagini orfane, hreflang, text de link, Sitemap XML:** opțional citește `sitemap.xml` (o cerere în plus, dezactivată implicit) ca să afle paginile fără link către ele; verifică hreflang (cod, auto-referință, legătură de întoarcere) și textele de link goale sau generice; exportă un Sitemap XML din paginile citite (fără date inventate).
 
 ## Manual de utilizare
 

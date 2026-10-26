@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 1.2.6 · **Last updated:** 2026-10-26
+**Version:** 2.0.0 · **Last updated:** 2026-10-26
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -33,6 +33,8 @@ Verified in the code and in a headless browser (Chromium/Playwright) on a local 
 - In-page anchors (`#section`) are checked locally against the `id`/`name` attributes in the HTML that was read or pasted — the only type of "broken link" that can be detected reliably in Paste mode / `file://` as well.
 - Light theme on request (system preference) and a print style.
 - Accessibility: tabs with arrows/Home/End, `aria-selected`, a progress bar with `role="progressbar"`, visible focus.
+- **Site map (2.0.0):** after a survey, an interactive graph of internal links shows click depth from the start page; two scans can be compared (previous run, or a scan saved as JSON): pages and links that appeared or disappeared, changed statuses. Nothing is kept between visits unless you save the file.
+- **Orphan pages, hreflang, link text, Sitemap XML:** optionally reads `sitemap.xml` (one extra request, off by default) to find pages nothing links to; checks hreflang (code, self-reference, return link) and empty or generic link text; exports a Sitemap XML from the pages read (no invented data).
 
 ## User guide
 
