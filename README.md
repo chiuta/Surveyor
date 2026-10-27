@@ -2,7 +2,9 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 2.0.0 · **Last updated:** 2026-10-26
+**Version:** 2.1.0 · **Last updated:** 2026-10-27
+
+**Status:** stable. **Offline:** no — checking links needs internet and contacts the hosts from your browser (see “Privacy and network”); the UI, exports and the companion script work without any server of ours.
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -45,6 +47,19 @@ Verified in the code and in a headless browser (Chromium/Playwright) on a local 
 5. Filter by state and open "Referenced on N pages" to see where the link must be corrected.
 6. **Copy report** copies a summary of the "washed out" links; **Export CSV** downloads all the results.
 
+## Companion for external links (2.1.0)
+
+The browser cannot read the status of external links (CORS), so Surveyor marks them **Uncertain**. The button **Export external links (.txt)** writes those addresses one per line; the optional script [`companion/surveyor-companion.mjs`](companion/surveyor-companion.mjs) (Node 18+, **no dependencies**, no telemetry, MIT) then checks them from your machine, where CORS does not apply:
+
+```
+node companion/surveyor-companion.mjs surveyor-external-links-2026-10-27.txt --only-problems
+node companion/surveyor-companion.mjs surveyor-report.csv --format json --out result.json   # it also reads Surveyor's CSV
+```
+
+It reports `ok`, `moved` (permanent redirect), `uncertain` (401/403/429: often bot blocking, check by hand) and `broken` (404/410/5xx/DNS/timeout), identifies itself honestly in the User-Agent, pauses between requests to the same host and does not read `robots.txt`: use it only for sites of your own or with the owner's consent. **Status: experimental; tested only against local test servers, not against real third-party sites.** It is not [Trade-Free-Link-Guardian](https://github.com/chiuta/Trade-Free-Link-Guardian): that one is a WordPress plugin that watches the links of your WordPress site on a schedule; Surveyor checks any site on demand, and the companion only completes the external links.
+
+Interface languages: Romanian is a complete, selectable language (and the default when the browser reports `ro`). The text of **Copy report** is still English only (planned).
+
 ## Privacy and network
 
 - **Storage:** none. It does not use `localStorage`, `sessionStorage`, IndexedDB or cookies.
@@ -76,6 +91,9 @@ Download `index.html` and open it in the browser. The page starts without intern
 MIT — see the `LICENSE` file. Declared in the header of the `index.html` file and in the page footer.
 
 ## History / Changelog
+
+### 2.1.0 — 2026-10-27
+- “Export external links” button, `companion/surveyor-companion.mjs`, status/offline lines, `CHANGELOG.md`. Previously: v2.0.0.
 
 ### 1.2.4 — 2026-10-22
 

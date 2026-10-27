@@ -1,4 +1,4 @@
-// Teste v2.0.0: hartă a site-ului (graf de linkuri interne), adâncime de clic, pagini orfane, comparație între scanări,
+// Teste v2.1.0: hartă a site-ului (graf de linkuri interne), adâncime de clic, pagini orfane, comparație între scanări,
 // hreflang, text de link, export Sitemap XML.
 // [fff-portable] axe-core: FFF_AXE / AXE_PATH, apoi pachetul `axe-core`.
 import {createRequire as __fffCR} from 'node:module';

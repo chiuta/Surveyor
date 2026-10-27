@@ -2,7 +2,9 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 2.0.0 · **Ultima actualizare:** 2026-10-26
+**Versiune:** 2.1.0 · **Ultima actualizare:** 2026-10-27
+
+**Stare:** stabil. **Offline:** nu — verificarea linkurilor cere internet și contactează gazdele din browserul tău (vezi „Confidențialitate și rețea”); interfața, exporturile și scriptul însoțitor funcționează fără vreun server al nostru.
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -45,6 +47,19 @@ Verificate în cod și într-un browser headless (Chromium/Playwright) pe un sit
 5. Filtrează după stare și deschide „Referenced on N pages” pentru a vedea unde trebuie corectat linkul.
 6. **Copy report** copiază un rezumat al linkurilor „washed out”; **Export CSV** descarcă toate rezultatele.
 
+## Însoțitor pentru linkurile externe (2.1.0)
+
+Browserul nu poate citi starea linkurilor externe (CORS), de aceea Surveyor le marchează **Incert**. Butonul **Exportă linkuri externe (.txt)** scrie acele adrese, câte una pe linie; scriptul opțional [`companion/surveyor-companion.mjs`](companion/surveyor-companion.mjs) (Node 18+, **fără dependențe**, fără telemetrie, MIT) le verifică apoi de pe calculatorul tău, unde CORS nu se aplică:
+
+```
+node companion/surveyor-companion.mjs surveyor-external-links-2026-10-27.txt --only-problems
+node companion/surveyor-companion.mjs surveyor-report.csv --format json --out rezultat.json   # citește și CSV-ul Surveyor
+```
+
+Raportează `ok`, `moved` (redirecționare permanentă), `uncertain` (401/403/429: adesea blocare de boți, verifică manual) și `broken` (404/410/5xx/DNS/timeout), se identifică onest în User-Agent, face pauze între cererile către aceeași gazdă și nu citește `robots.txt`: folosește-l doar pentru site-uri proprii sau cu acordul titularului. **Stare: experimental; testat doar pe servere locale de test, nu pe site-uri reale ale unor terți.** Nu este [Trade-Free-Link-Guardian](https://github.com/chiuta/Trade-Free-Link-Guardian): acela e un plugin WordPress care urmărește programat linkurile site-ului tău WordPress; Surveyor verifică la cerere orice site, iar însoțitorul doar completează linkurile externe.
+
+Limbi: româna este o limbă completă și selectabilă a interfeței (și implicită când browserul raportează `ro`). Textul butonului **Copiază raportul** rămâne deocamdată doar în engleză (planificat).
+
 ## Confidențialitate și rețea
 
 - **Stocare:** niciuna. Nu folosește `localStorage`, `sessionStorage`, IndexedDB sau cookie-uri.
@@ -76,6 +91,9 @@ Descarcă `index.html` și deschide-l în browser. Pagina pornește fără inter
 MIT — vezi fișierul `LICENSE`. Declarată în antetul fișierului `index.html` și în subsolul paginii.
 
 ## Istoric / Changelog
+
+### 2.1.0 — 2026-10-27
+- Buton „Exportă linkuri externe”, `companion/surveyor-companion.mjs`, linii Stare/Offline, `CHANGELOG.md`. Anterior: v2.0.0.
 
 ### 1.2.4 — 2026-10-22
 
