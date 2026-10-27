@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 2.1.0 · **Ultima actualizare:** 2026-10-27
+**Versiune:** 2.2.0 · **Ultima actualizare:** 2026-10-27
 
 **Stare:** stabil. **Offline:** nu — verificarea linkurilor cere internet și contactează gazdele din browserul tău (vezi „Confidențialitate și rețea”); interfața, exporturile și scriptul însoțitor funcționează fără vreun server al nostru.
 
@@ -58,7 +58,7 @@ node companion/surveyor-companion.mjs surveyor-report.csv --format json --out re
 
 Raportează `ok`, `moved` (redirecționare permanentă), `uncertain` (401/403/429: adesea blocare de boți, verifică manual) și `broken` (404/410/5xx/DNS/timeout), se identifică onest în User-Agent, face pauze între cererile către aceeași gazdă și nu citește `robots.txt`: folosește-l doar pentru site-uri proprii sau cu acordul titularului. **Stare: experimental; testat doar pe servere locale de test, nu pe site-uri reale ale unor terți.** Nu este [Trade-Free-Link-Guardian](https://github.com/chiuta/Trade-Free-Link-Guardian): acela e un plugin WordPress care urmărește programat linkurile site-ului tău WordPress; Surveyor verifică la cerere orice site, iar însoțitorul doar completează linkurile externe.
 
-Limbi: româna este o limbă completă și selectabilă a interfeței (și implicită când browserul raportează `ro`). Textul butonului **Copiază raportul** rămâne deocamdată doar în engleză (planificat).
+Limbi: româna este o limbă completă și selectabilă a interfeței (și implicită când browserul raportează `ro`). Textul raportului din **Copiază raportul** (titlu, totaluri, note) este tradus în cele 8 limbi ale interfeței (2.2.0; traducere automată pentru FR/IT/ES/PT/DE/HU, nerevizuită de vorbitori nativi). Numele coloanelor CSV rămân în engleză intenționat (format pentru mașini).
 
 ## Confidențialitate și rețea
 

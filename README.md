@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 2.1.0 · **Last updated:** 2026-10-27
+**Version:** 2.2.0 · **Last updated:** 2026-10-27
 
 **Status:** stable. **Offline:** no — checking links needs internet and contacts the hosts from your browser (see “Privacy and network”); the UI, exports and the companion script work without any server of ours.
 
@@ -58,7 +58,7 @@ node companion/surveyor-companion.mjs surveyor-report.csv --format json --out re
 
 It reports `ok`, `moved` (permanent redirect), `uncertain` (401/403/429: often bot blocking, check by hand) and `broken` (404/410/5xx/DNS/timeout), identifies itself honestly in the User-Agent, pauses between requests to the same host and does not read `robots.txt`: use it only for sites of your own or with the owner's consent. **Status: experimental; tested only against local test servers, not against real third-party sites.** It is not [Trade-Free-Link-Guardian](https://github.com/chiuta/Trade-Free-Link-Guardian): that one is a WordPress plugin that watches the links of your WordPress site on a schedule; Surveyor checks any site on demand, and the companion only completes the external links.
 
-Interface languages: Romanian is a complete, selectable language (and the default when the browser reports `ro`). The text of **Copy report** is still English only (planned).
+Interface languages: Romanian is a complete, selectable language (and the default when the browser reports `ro`). The text of **Copy report** (title, counts, notes) is translated into all 8 interface languages (2.2.0; machine translation for FR/IT/ES/PT/DE/HU, not reviewed by native speakers). The CSV column names stay English on purpose (machine format).
 
 ## Privacy and network
 
