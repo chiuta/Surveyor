@@ -27,8 +27,8 @@
   "storageKeys": [
     "surveyor-lang"
   ],
-  "sizeBytes": 403027,
-  "sha256": "5ca70a05388ff5770695d86897456c2a986e015fb4dc20cb5f0bb07cbf0fbf91",
+  "sizeBytes": 403070,
+  "sha256": "277eb38fd37b02c0b12eb0247843c1052bbd0351f7bb2ae1495b77a67234cf70",
   "csp": {
     "present": true,
     "directives": {
