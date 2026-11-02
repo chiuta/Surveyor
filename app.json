@@ -27,8 +27,8 @@
   "storageKeys": [
     "surveyor-lang"
   ],
-  "sizeBytes": 403070,
-  "sha256": "277eb38fd37b02c0b12eb0247843c1052bbd0351f7bb2ae1495b77a67234cf70",
+  "sizeBytes": 543504,
+  "sha256": "ea1d40f2538b44bb32ea041fb9869a943d1c6753c06294a13001897cb3ac3ab8",
   "csp": {
     "present": true,
     "directives": {
@@ -70,6 +70,10 @@
       "dialog",
       "label",
       "bundle",
+      "qr",
+      "p2p",
+      "sync",
+      "history",
       "bridge"
     ]
   },
@@ -81,6 +85,10 @@
       "dialog",
       "label",
       "bundle",
+      "qr",
+      "p2p",
+      "sync",
+      "history",
       "bridge"
     ]
   },
