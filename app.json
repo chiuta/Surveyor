@@ -2,8 +2,8 @@
   "schema": 1,
   "slug": "surveyor",
   "name": "SURVEYOR — a link surveyor for your website",
-  "version": "2.2.0",
-  "updated": "2026-10-27",
+  "version": "2.3.0",
+  "updated": "2026-11-02",
   "description": "Link checker for websites in a single HTML file. Crawls same-origin pages, checks links and images, exports a report. Sends requests from your browser to every site it checks.",
   "egress": [
     {
@@ -27,13 +27,13 @@
   "storageKeys": [
     "surveyor-lang"
   ],
-  "sizeBytes": 382254,
-  "sha256": "6989bc07456e10ca16ed2c9cb665f9ea00e67c4cd7c78cdd533cd0fa1f3924b6",
+  "sizeBytes": 403027,
+  "sha256": "5ca70a05388ff5770695d86897456c2a986e015fb4dc20cb5f0bb07cbf0fbf91",
   "csp": {
     "present": true,
     "directives": {
       "default-src": "'none'",
-      "script-src": "sha256×4",
+      "script-src": "sha256×5",
       "style-src": "'unsafe-inline'",
       "img-src": "'self' data:",
       "connect-src": "https: http:",
@@ -69,7 +69,8 @@
       "store",
       "dialog",
       "label",
-      "bundle"
+      "bundle",
+      "bridge"
     ]
   },
   "kit": {
@@ -79,7 +80,8 @@
       "store",
       "dialog",
       "label",
-      "bundle"
+      "bundle",
+      "bridge"
     ]
   },
   "selfSerializing": false

@@ -1,4 +1,4 @@
-// Teste v2.2.0: „Copiază raportul” tradus în cele 8 limbi (textul raportului, nu doar eticheta butonului).
+// Teste v2.3.0: „Copiază raportul” tradus în cele 8 limbi (textul raportului, nu doar eticheta butonului).
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
