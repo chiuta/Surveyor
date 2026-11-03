@@ -2,6 +2,10 @@
 
 Format SemVer (MAJOR.MINOR.PATCH).
 
+## 2.3.2 — 2026-11-03
+
+Etapa 7 (audit axe): butonul A/B al motorului comun are acum numele accesibil „A/B — …”, care conține textul vizibil (regula label-content-name-mismatch).
+
 ## 2.3.1 — 2026-11-03
 
 Etapa 4: motorul A/B comun («Ce variantă e mai bună?», clasament Elo, rezultat în plicul experiment/ab)
