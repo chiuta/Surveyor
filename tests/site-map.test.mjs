@@ -160,6 +160,9 @@ const dl = async (p, sel) => { const [d] = await Promise.all([p.waitForEvent('do
   check('pagini orfane și nepreluate nu apar în XML', !/orphan|\/team/.test(sm.text));
 
   console.log('— salvare și comparație');
+  const rcsv = await dl(p, '#exportCsvBtn');
+  const rl = rcsv.text.replace(/^\ufeff/, '').split('\r\n');
+  check('CSV raport: coloana Action la sfârșit, derivată din stare', rl[0] === 'URL,Type,Status,Detail,Referenced by,Action' && rl.slice(1).every((l) => /,(replace or remove|check manually|ignore|none)$/.test(l)) && /washed-out,.*,replace or remove$/m.test(rcsv.text), rl.slice(0, 4));
   const sc = await dl(p, '#exportScanBtn');
   const scan = JSON.parse(sc.text);
   check('scanare JSON: app, tip, pagini, linkuri, stări', scan.app === 'surveyor' && scan.kind === 'scan' && scan.pages.length === 9 && scan.links.length >= 11 && Object.keys(scan.status).length > 5, [scan.pages.length, scan.links.length]);

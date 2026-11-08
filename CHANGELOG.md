@@ -2,6 +2,10 @@
 
 Format SemVer (MAJOR.MINOR.PATCH).
 
+## 2.3.5 — 2026-11-08
+
+- Nou: coloana `Action` (acțiune recomandată: replace or remove / check manually / ignore / none) la sfârșitul exportului CSV, derivată din stare; coloanele existente nu se schimbă.
+
 ## 2.3.2 — 2026-11-03
 
 Etapa 7 (audit axe): butonul A/B al motorului comun are acum numele accesibil „A/B — …”, care conține textul vizibil (regula label-content-name-mismatch).
