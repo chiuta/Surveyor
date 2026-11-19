@@ -2,8 +2,8 @@
   "schema": 1,
   "slug": "surveyor",
   "name": "SURVEYOR — a link surveyor for your website",
-  "version": "2.4.2",
-  "updated": "2026-11-17",
+  "version": "2.4.3",
+  "updated": "2026-11-20",
   "description": "Link checker for websites in a single HTML file. Crawls same-origin pages, checks links and images, exports a report. Sends requests from your browser to every site it checks.",
   "egress": [
     {
@@ -30,8 +30,8 @@
   "storageKeys": [
     "surveyor-lang"
   ],
-  "sizeBytes": 847592,
-  "sha256": "3c83cc7532c0337fae8be1c96a5abd2c1de4f9edcf0520214cd425102dc89bfb",
+  "sizeBytes": 851903,
+  "sha256": "cb58eb17b0d8425d4ae920bacc260d6f3006279fec2b4f5a8a33ea9893575478",
   "csp": {
     "present": true,
     "directives": {
@@ -86,7 +86,7 @@
     ]
   },
   "kit": {
-    "version": "1.8.0",
+    "version": "1.8.1",
     "modules": [
       "core",
       "store",
